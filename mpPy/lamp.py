@@ -5,6 +5,11 @@ import traceback
 from scipy.linalg import cholesky, solve_triangular, svd
 from sklearn.preprocessing import scale
 
+def plot(y, t):
+    import matplotlib.pyplot as mpl
+    mpl.scatter(y.T[0], y.T[1], c = t)
+    mpl.show()
+
 def readInput(fileName):
     try:
         print("Carregando conjunto de dados ", fileName)
@@ -80,59 +85,17 @@ def LAMP(matrix_dataset, samplesSubset=None, Initial_2D=None, ControlPoints=1):
             Yhat[:,] -= Ytil
 
             U, s, V = svd(np.dot(Xhat.transpose(),Yhat))
+            aux = np.zeros((matrix_nCol,Init_2D_Col))
+            for k in range(Init_2D_Col):
+                aux[k, range(Init_2D_Col)] = V[k]
 
-
-
-            #M = np.dot(U,np.transpose(V))
-            #projection[i] = (point - Xtil) * M + Ytil
-        print(U.shape,s.shape,V.shape)
+            M = np.dot(U,aux)
+            projection[i] = np.dot((point - Xtil), M)  + Ytil
         return projection
 
 
     except Exception as e:
         print(traceback.print_exc())
-
-
-    """
-
-    projection = np.zeros((matrix_nRow,2))
-    for i in range(matrix_nRow):
-        point = matrix_dataset[i, :]
-
-        skip = False
-        alphas = np.zeros((Init_2D_Row))
-
-        for j in range(samplesSubset):
-            dist = sum(2 ** (matrix_dataset[j, :] - point))
-            if dist < 1e-6:
-                projection[i,:] = Initial_2D[j, :]
-                skip = True
-                break
-            alphas[j] = 1.0/dist
-
-        if skip is True:
-            continue
-
-        c = samplesSubset * ControlPoints
-        if c < samplesSubset:
-            index = alphas[::-1]
-            j = c
-            for j in range(samplesSubset):
-                alphas[index[j]] = 0
-
-        alphas_sum = sum(alphas)
-        alphas_sqrt = np.sqrt(alphas)
-
-        Xtil = (alphas * Xs) / alphas_sum
-        Ytil = (alphas * Initial_2D) / alphas_sum
-
-        Xhat = samplesSubset
-        Xhat[:,] -= Xtil
-        Yhat = Initial_2D
-        Initial_2D[]
-        """
-
-
 
 def main():
     try:
@@ -144,7 +107,7 @@ def main():
         pos = data[:, b - 1]
         print("Executando LAMP... ")
         y = LAMP(values)
-        forceScheme.plot(y, pos)
+        plot(y, pos)
         #print(y)
 
     except Exception as e:
