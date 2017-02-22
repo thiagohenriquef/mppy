@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
+from scipy.linalg import cholesky
 import sys
 import forceScheme
 import traceback
@@ -47,6 +48,28 @@ def LSP(matrix_dataset, subSamples=None, Init_Config_subSamples=None, k=15, q=2)
         A = np.zeros((matrix_nRow+nc,matrix_nRow))
         Dx = squareform(pdist(matrix_dataset))
 
+        for i in range(matrix_nRow):
+            neighbors = np.argsort(Dx[i,:])[1:k+1]
+            A[i,i] = 1
+            alphas = Dx[i, neighbors]
+            if any(alphas < 1e-6):
+                #index = np.where(alphas < 1e-6)
+                alphas = 0
+                #alphas[index] = 1
+            else:
+                alphas = 1/alphas
+                alphas = alphas/np.sum(alphas)
+                alphas = alphas/np.sum(alphas)
+
+            A[i,neighbors] = -(alphas)
+
+        A[matrix_nRow:nc, subSamples[0:nc]] = 1
+        b = np.zeros((matrix_nRow+nc))
+        b[0:matrix_nRow-1] = 0
+
+        Y = np.zeros((matrix_nRow, q))
+        L = np.dot(A.transpose(),A)
+        S = cholesky(L)
 
     except Exception as e:
         #print("Exceção")
