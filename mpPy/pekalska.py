@@ -54,7 +54,6 @@ def pekalska(data, sampleIndices=None, Ys=None):
             else:
                 Y[i,:] = np.dot(data[i,:],P)
 
-
         return Y
     except Exception as e:
         print("Exceção")
