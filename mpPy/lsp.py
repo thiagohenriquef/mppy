@@ -1,11 +1,10 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
-from scipy.linalg import cholesky
+from scipy.linalg import cholesky, solve_triangular
 import sys
 import forceScheme
 import traceback
 
-np.set_printoptions(threshold=np.nan)
 np.seterr(divide='ignore', invalid='ignore')
 
 def readInput(fileName):
@@ -63,13 +62,25 @@ def LSP(matrix_dataset, subSamples=None, Init_Config_subSamples=None, k=15, q=2)
 
             A[i,neighbors] = -(alphas)
 
+
         A[matrix_nRow:nc, subSamples[0:nc]] = 1
         b = np.zeros((matrix_nRow+nc))
         b[0:matrix_nRow-1] = 0
 
         Y = np.zeros((matrix_nRow, q))
         L = np.dot(A.transpose(),A)
-        S = cholesky(L)
+        S = cholesky(L,lower=True)
+        for j in range(q):
+            b[matrix_nRow:matrix_nRow+nc] = Init_Config_subSamples[:,j]
+            t = np.dot(np.transpose(A),b)
+            Y[:,j] = solve_triangular(S, solve_triangular(S, t, trans=1))
+
+        for count in range(matrix_nRow):
+            if count in subSamples:
+                Y[subSamples, :] = Init_Config_subSamples
+            else:
+                continue
+        return Y
 
     except Exception as e:
         #print("Exceção")
