@@ -69,11 +69,11 @@ def LSP(matrix_dataset, subSamples=None, Init_Config_subSamples=None, k=15, q=2)
 
         Y = np.zeros((matrix_nRow, q))
         L = np.dot(A.transpose(),A)
-        S = cholesky(L,lower=True)
+        U = cholesky(L,lower=True)
         for j in range(q):
             b[matrix_nRow:matrix_nRow+nc] = Init_Config_subSamples[:,j]
             t = np.dot(np.transpose(A),b)
-            Y[:,j] = solve_triangular(S, solve_triangular(S, t, trans=1))
+            Y[:,j] = solve_triangular(U, solve_triangular(U, t, trans=1))
 
         for count in range(matrix_nRow):
             if count in subSamples:

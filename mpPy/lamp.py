@@ -2,8 +2,28 @@ import numpy as np
 import forceScheme
 import sys
 import traceback
-from scipy.linalg import cholesky, solve_triangular, svd
-from sklearn.preprocessing import scale
+from scipy.linalg import svd
+from scipy.spatial.distance import squareform, pdist
+
+def kruskal(orig_matrix, new_matrix):
+    try:
+        row, col = orig_matrix.shape
+        num = 0.0
+        den = 0.0
+        #print(pdist(orig_matrix).shape)
+        #print(squareform(pdist(orig_matrix)).shape)
+        orig_matrix = squareform(pdist(orig_matrix))
+        new_matrix = squareform(pdist(new_matrix))
+        for i in range(row):
+            for j in range(1, col):
+                num += np.power(orig_matrix[i, j] - new_matrix[i, j], 2)
+                den += np.power(new_matrix[i, j], 2)
+
+        result = np.sqrt((num / den))
+
+        return result
+    except Exception as e:
+        print(traceback.print_exc())
 
 def plot(y, t):
     import matplotlib.pyplot as mpl
@@ -99,16 +119,22 @@ def LAMP(matrix_dataset, samplesSubset=None, Initial_2D=None, ControlPoints=1):
 
 def main():
     try:
+        print("Executando LAMP... ")
         #file = str(sys.argv[1])
         #data = rf.readInput(file)
         data = readInput("iris.data")
         a, b = data.shape
-        values = data[:, range(b - 1)]
-        pos = data[:, b - 1]
-        print("Executando LAMP... ")
-        y = LAMP(values)
-        plot(y, pos)
-        #print(y)
+        new_matrix = data[:, range(b - 1)]
+        positions = data[:, b - 1]
+
+        random_matrix = np.random.random((a, 2))
+        test = random_matrix.copy()
+        new_matrix = LAMP(new_matrix)
+
+        stress = kruskal(test, new_matrix)
+
+        plot(new_matrix, positions)
+        print(stress)
 
     except Exception as e:
         print(str(e))

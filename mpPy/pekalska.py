@@ -1,9 +1,9 @@
 import numpy as np
 import sys
 import forceScheme
-import math
 import sklearn as sk
 import traceback
+from sklearn.preprocessing import scale
 
 def readInput(fileName):
     try:
@@ -42,7 +42,7 @@ def pekalska(data, sampleIndices=None, Ys=None):
             print("Erro, sample indices and Ys precisam ter a mesma quantidade de instâncias")
             sys.exit(1)
 
-        Ys = sk.preprocessing.scale(Ys, with_std=False)
+        Ys = scale(Ys)
         P = np.dot(Ds.transpose(),Ys)
         Y = np.zeros((nRow, ncolY))
         Y[sampleIndices,:] = Ys
