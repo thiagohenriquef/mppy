@@ -1,3 +1,6 @@
+
+
+"""
 from builtins import print
 
 __autor__ = 'thiago'
@@ -54,6 +57,9 @@ def force(data, Y=None, maxIter=50, tol=0.0, fraction=8.0, eps=1e-6):
 
     if Y is None:
         Y = np.random.random((row, 2))
+    #if Y is None:
+    #    Y = data[:, 0:1]
+
     X = squareform(pdist(data))
     index = np.random.permutation(row)
 
@@ -108,3 +114,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""
