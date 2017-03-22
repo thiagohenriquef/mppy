@@ -5,8 +5,8 @@ Orientador: Tácito Trindade de Araújo Tiburtino Neves <p>
 
 Técnicas Implementadas: <p>
 Force Scheme -> OK <p>
-LAMP -> OK <p>
+LAMP -> Not OK <p>
 LSP -> Not OK <p>
-Pekalska -> Mais testes <p>
-PLMP -> OK <p>
+Pekalska -> Not OK <p>
+PLMP -> Not OK <p>
 
