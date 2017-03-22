@@ -1,117 +1,70 @@
+try:
+    import numpy as np
+    import scipy as sp
+    import sklearn as sk
+    import matplotlib as mpl
+    import traceback
+except ImportError as e:
+    print("Please install the following packages: ")
+    print("Numpy: http://www.numpy.org/")
+    print("Scipy: https://www.scipy.org/")
+    print("Scikit Learn: http://scikit-learn.org/stable/")
 
 
-"""
-from builtins import print
+def force2D(inst):
+    from scipy.spatial.distance import pdist, squareform
+    init2D = inst.initial_2D_matrix()
+    distance_matrix = squareform(pdist(inst.data_matrix()))
+    num_instancies = inst.instances()
 
-__autor__ = 'thiago'
-""""Force Scheme Projection"""
+    index = np.random.permutation(num_instancies)
+    for i in range(inst.max_iterations()):
+        for i in range(inst.instances()):
+            instance1 = index[i]
+            for j in range(inst.instances()):
+                instance2 = index[j]
 
-import numpy as np
-from scipy.spatial.distance import pdist, squareform
-import sys
-import traceback
+                if instance1 == instance2:
+                    continue
+                else:
+                    x1x2 = init2D[instance2, 0] - init2D[instance1, 0]
+                    y1y2 = init2D[instance2, 1] - init2D[instance1, 1]
+                    dr2 = np.hypot(x1x2, y1y2)
+                    #dr2 = np.sqrt((x1x2 * x1x2) + (y1y2 * y1y2))
+
+                if dr2 < inst.epsilon():
+                    dr2 = inst.epsilon()
 
 
-def kruskal(orig_matrix, new_matrix):
+                drn = distance_matrix[instance1,instance2] - dr2
+                delta = drn - dr2
+                delta /= inst.fraction_of_delta()
+
+                init2D[instance2,0] += delta * (x1x2 / dr2)
+                init2D[instance2,1] += delta * (y1y2 / dr2)
+
+    return init2D
+
+def code():
     try:
-        row, col = orig_matrix.shape
-        num = 0.0
-        den = 0.0
-        #print(pdist(orig_matrix).shape)
-        #print(squareform(pdist(orig_matrix)).shape)
-        orig_matrix = squareform(pdist(orig_matrix))
-        new_matrix = squareform(pdist(new_matrix))
-        for i in range(row):
-            for j in range(1, col):
-                num += np.power(orig_matrix[i, j] - new_matrix[i, j], 2)
-                den += np.power(new_matrix[i, j], 2)
+        from mpPy.Model.Matrix import Matrix, Reader
+        from mpPy.Model.Techniques import ForceScheme
 
-        result = np.sqrt((num / den))
+        r = Reader()
+        file = "iris.data"
+        print("Carregando conjunto de dados ", file)
 
-        return result
-    except Exception as e:
-        print(traceback.print_exc())
+        matrix = r.reader_file(file)
+        inst = ForceScheme(matrix)
+        bidimensional_plot = force2D(inst)
 
-
-def readInput(fileName):
-    try:
-        print("Carregando conjunto de dados ", fileName)
-        data = np.loadtxt(fileName, delimiter=",")
-        return data
-    except IOError as e:
-        print("Não foi possível abrir o arquivo", fileName)
-        print(e)
-        sys.exit(1)
-
-
-def plot(y, t):
-    import matplotlib.pyplot as mpl
-    mpl.scatter(y.T[0], y.T[1], c=t)
-    mpl.show()
-
-
-def force(data, Y=None, maxIter=50, tol=0.0, fraction=8.0, eps=1e-6):
-    row, column = np.shape(data)
-    data2 = data[:, range(column - 1)]
-    data = data2
-
-    if Y is None:
-        Y = np.random.random((row, 2))
-    #if Y is None:
-    #    Y = data[:, 0:1]
-
-    X = squareform(pdist(data))
-    index = np.random.permutation(row)
-
-    # para iter=1 até k faça
-    for i in range(maxIter):
-        # para todo yi em Y
-        for j in range(row):
-            inst1 = index[j]
-
-            # para todo yj em Y com yi != yj
-            for k in range(row):
-                inst2 = index[k]
-                if inst1 != inst2:
-                    # calcular vetor yi para yj
-                    v = Y[inst2] - Y[inst1]
-                    distR2 = np.hypot(v[0], v[1])
-                    distR2 = tol if distR2 < tol else distR2
-                    delta = (X[inst1][inst2] - distR2) / fraction
-                    a = (sum(v)) / distR2
-
-                    # mover yj em direção de vetor uma fração de delta
-                    Y[inst2] += delta * a
-
-    return Y
-
-
-def main():
-    try:
-        print("Executando Force Scheme... ")
-        # file = str(sys.argv[1])
-        # data = readFile.readInput(file)
-        data = readInput("iris.data")
-
-        a, b = data.shape
-        new_matrix = data[:, range(b - 1)]
-        positions = data[:, b - 1]
-
-        random_matrix = np.random.random((a, 2))
-        test = random_matrix.copy()
-        new_matrix = force(new_matrix, random_matrix)
-
-        stress = kruskal(test, new_matrix)
-
-        plot(new_matrix, positions)
-        print(stress)
+        from mpPy.Model.Plot import Plot
+        p = Plot(bidimensional_plot, inst.clusters(), matrix)
+        p.semi_interactive_scatter_plot()
 
     except Exception as e:
         print(traceback.print_exc())
-        print(str(e))
-        sys.exit(1)
 
 
 if __name__ == "__main__":
-    main()
-"""
+    code()
