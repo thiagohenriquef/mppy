@@ -1,3 +1,5 @@
+import numpy
+
 from mpPy.Model.Matrix import Matrix
 
 
@@ -7,28 +9,16 @@ class ForceScheme(Matrix):
 
     """
 
-    def __init__(self, matrix, max_iterations=50, tolerance=0.0, fraction_of_delta=8.0, epsilon=1e-6):
+    def __init__(self, matrix,
+                 max_iterations=50,
+                 tolerance=0.0,
+                 fraction_of_delta=8.0,
+                 epsilon=1e-6):
         super().__init__(matrix)
-        self._max_iterations = max_iterations
-        self._tolerance = tolerance
-        self._fraction_of_delta = fraction_of_delta
-        self._epsilon = epsilon
-
-    def __getattribute__(self, *args, **kwargs):
-        return super().__getattribute__(*args, **kwargs)
-
-    def max_iterations(self):
-        return self._max_iterations
-
-    def tolerance(self):
-        return self._tolerance
-
-    def fraction_of_delta(self):
-        return self._fraction_of_delta
-
-    def epsilon(self):
-        return self._epsilon
-
+        self.max_iterations = max_iterations
+        self.tolerance = tolerance
+        self.fraction_of_delta = fraction_of_delta
+        self.epsilon = epsilon
 
 class LSP(Matrix):
     """
@@ -37,13 +27,17 @@ class LSP(Matrix):
 
     """
 
-    def __init__(self):
-        super.__init__()
-        self.subsample_indices = None
-        self.num_neighbors = None
-        self.initial_neighbors = None
-        self.dimensionality = None
+    def __init__(self, matrix,
+                 subsample_indices = None,
+                 initial_subsample=None,
+                 num_neighbors = 15,
+                 dimensionality = 2):
 
+        super().__init__(matrix)
+        self.subsample_indices = subsample_indices
+        self.initial_subsample = initial_subsample
+        self.num_neighbors = num_neighbors
+        self.dimensionality = dimensionality
 
 class Pekalska(Matrix):
     """
@@ -52,10 +46,30 @@ class Pekalska(Matrix):
 
     """
 
-    def __init__(self):
-        self.subsample_indices = None
-        self.subsample_mapping = None
+    def __init__(self, matrix):
+        super().__init__(matrix)
+        self._subsample_indices = None
+        self._subsample_mapping = None
 
+    def __init__(self, matrix, subsample_indices, subsample_mapping):
+        super().__init__(matrix)
+        self._subsample_indices = subsample_indices
+        self._subsample_mapping = subsample_mapping
+
+    def __getattribute__(self, *args, **kwargs):
+        return super().__getattribute__(*args, **kwargs)
+
+    def subsample_indices(self):
+        return self._subsample_indices
+
+    def subsample_mapping(self):
+        return self._subsample_mapping
+
+    def subsample_indices(self, subsample_indices):
+        self._subsample_indices = subsample_indices
+
+    def subsample_mapping(self, subsample_mapping):
+        self._subsample_mapping = subsample_mapping
 
 class PLMP(Matrix):
     """
@@ -63,11 +77,14 @@ class PLMP(Matrix):
     Part-Linear Multidimensional Projection
 
     """
-
-    def __init__(self):
-        self.subsample_indices = None
-        self.subsample_control_points = None
-
+    def __init__(self, matrix,
+                 subsample_indices = None,
+                 subsample_control_points = None,
+                 dimensionality = 2):
+        super().__init__(matrix)
+        self.subsample_indices = subsample_indices
+        self.subsample_control_points = subsample_control_points
+        self.dimensionality = dimensionality
 
 class LAMP(Matrix):
     """
@@ -76,7 +93,11 @@ class LAMP(Matrix):
 
     """
 
-    def __init__(self):
-        self.subsample_indices = None
-        self.initial_2d_subsample = None
-        self.proportion = None
+    def __init__(self, matrix,
+                 proportion = 1,
+                 subsample_indices = None,
+                 initial_sample = None):
+        super().__init__(matrix)
+        self.subsample_indices = subsample_indices
+        self.initial_sample = initial_sample
+        self.proportion = proportion

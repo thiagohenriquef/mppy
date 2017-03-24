@@ -15,29 +15,20 @@ class Plot():
         pass
 
     def __init__(self, bidimensional_representation, clusters, matrix):
-        self._bidimensional_representation = bidimensional_representation
-        self._clusters = clusters
-        self._matrix = matrix
-
-    def bidimensional_representation(self):
-        return self._bidimensional_representation
-
-    def clusters(self):
-        return self._clusters
-
-    def matrix(self):
-        return self._matrix
+        self.bidimensional_representation = bidimensional_representation
+        self.clusters = clusters
+        self.matrix = matrix
 
     def simple_scatter_plot(self):
-        mat_2D = self.bidimensional_representation()
-        clusters = self.clusters()
+        mat_2D = self.bidimensional_representation
+        clusters = self.clusters
         mplpy.scatter(mat_2D[:,0], mat_2D[:,1], c=clusters)
         mplpy.show()
 
     def semi_interactive_scatter_plot(self):
-        mat_2D = self.bidimensional_representation()
-        clusters = self.clusters()
-        matrix = self.matrix()
+        mat_2D = self.bidimensional_representation
+        clusters = self.clusters
+        matrix = self.matrix
 
         if 1:  # picking on a scatter plot (matplotlib.collections.RegularPolyCollection)
             def onpick3(event):

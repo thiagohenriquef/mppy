@@ -13,15 +13,15 @@ except ImportError as e:
 
 def force2D(inst):
     from scipy.spatial.distance import pdist, squareform
-    init2D = inst.initial_2D_matrix()
-    distance_matrix = squareform(pdist(inst.data_matrix()))
-    num_instancies = inst.instances()
+    init2D = inst.initial_2D_matrix
+    distance_matrix = squareform(pdist(inst.data_matrix))
+    num_instances = inst.instances
 
-    index = np.random.permutation(num_instancies)
-    for i in range(inst.max_iterations()):
-        for i in range(inst.instances()):
+    index = np.random.permutation(num_instances)
+    for i in range(inst.max_iterations):
+        for i in range(num_instances):
             instance1 = index[i]
-            for j in range(inst.instances()):
+            for j in range(num_instances):
                 instance2 = index[j]
 
                 if instance1 == instance2:
@@ -32,13 +32,13 @@ def force2D(inst):
                     dr2 = np.hypot(x1x2, y1y2)
                     #dr2 = np.sqrt((x1x2 * x1x2) + (y1y2 * y1y2))
 
-                if dr2 < inst.epsilon():
-                    dr2 = inst.epsilon()
+                if dr2 < inst.epsilon:
+                    dr2 = inst.epsilon
 
 
                 drn = distance_matrix[instance1,instance2] - dr2
                 delta = drn - dr2
-                delta /= inst.fraction_of_delta()
+                delta /= inst.fraction_of_delta
 
                 init2D[instance2,0] += delta * (x1x2 / dr2)
                 init2D[instance2,1] += delta * (y1y2 / dr2)
@@ -59,7 +59,7 @@ def code():
         bidimensional_plot = force2D(inst)
 
         from mpPy.Model.Plot import Plot
-        p = Plot(bidimensional_plot, inst.clusters(), matrix)
+        p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 
     except Exception as e:

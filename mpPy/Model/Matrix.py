@@ -14,33 +14,18 @@ except ImportError as e:
 
 class Matrix():
     def __init__(self, matrix):
-        self._orig_matrix = matrix
-        self._instances = self._orig_matrix.shape[0]
-        self._dimensions = (self._orig_matrix.shape[1] - 1)
-        self._clusters = self._orig_matrix[:, (self._dimensions)]
-        self._initial_2D_matrix = np.random.random((self._instances, 2))
-        self._data_matrix = self._orig_matrix.copy()
-
-    def data_matrix(self):
-        return self._data_matrix[:, range(self.dimensions())]
-
-    def orig_matrix(self):
-        return self._orig_matrix
-
-    def instances(self):
-        return self._instances
-
-    def dimensions(self):
-        return self._dimensions
+        self.orig_matrix = matrix
+        self.instances = self.orig_matrix.shape[0]
+        self.dimensions = (self.orig_matrix.shape[1] - 1)
+        self.clusters = self.orig_matrix[:, (self.dimensions)]
+        self.initial_2D_matrix = np.random.random((self.instances, 2))
+        self.data_matrix = matrix[:,:-1]
 
     def clusters(self):
-        return self._clusters.astype(int)
-
-    def initial_2D_matrix(self):
-        return self._initial_2D_matrix
+        return self.clusters.astype(int)
 
     def __str__(self):
-        return '<{}: {} - {} >\n'.format(self.__class__.__name__, self.instances(), self.dimensions())
+        return '<Técnica {}: {} instâncias - {} atributos >\n'.format(self.__class__.__name__, self.instances(), self.dimensions())
 
 class Reader(object):
     def __init__(self):
