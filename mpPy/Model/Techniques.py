@@ -45,31 +45,12 @@ class Pekalska(Matrix):
     Pekalska Approximation
 
     """
-
-    def __init__(self, matrix):
+    def __init__(self, matrix,
+                 subsample_indices = None,
+                 subsample_mapping = None):
         super().__init__(matrix)
-        self._subsample_indices = None
-        self._subsample_mapping = None
-
-    def __init__(self, matrix, subsample_indices, subsample_mapping):
-        super().__init__(matrix)
-        self._subsample_indices = subsample_indices
-        self._subsample_mapping = subsample_mapping
-
-    def __getattribute__(self, *args, **kwargs):
-        return super().__getattribute__(*args, **kwargs)
-
-    def subsample_indices(self):
-        return self._subsample_indices
-
-    def subsample_mapping(self):
-        return self._subsample_mapping
-
-    def subsample_indices(self, subsample_indices):
-        self._subsample_indices = subsample_indices
-
-    def subsample_mapping(self, subsample_mapping):
-        self._subsample_mapping = subsample_mapping
+        self.subsample_indices = subsample_indices
+        self.subsample_mapping = subsample_mapping
 
 class PLMP(Matrix):
     """

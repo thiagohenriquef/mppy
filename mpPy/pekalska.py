@@ -13,12 +13,23 @@ except ImportError as e:
 
 def pekalska(inst):
     from scipy.spatial.distance import pdist, squareform
-    init2D = inst.initial_2D_matrix()
-    distance_matrix = squareform(pdist(inst.data_matrix()))
-    num_instancies = inst.instances()
+    from sklearn.preprocessing import scale
+    distance_matrix = squareform(pdist(inst.data_matrix))
 
-    if inst.subsample_indices() is None:
-        pass
+    if inst.subsample_indices is None:
+        inst.subsample_indices = np.random.randint(0, inst.instances - 1, int(3.0 * np.sqrt(inst.instances)))
+
+    Ds = inst.data_matrix[inst.subsample_indices, :]
+    if inst.subsample_mapping is None:
+        from mpPy.forceScheme import force2D
+        from mpPy.Model.Techniques import ForceScheme
+        f = ForceScheme(Ds)
+        inst.subsample_mapping = force2D(f)
+
+    inst.subsample_mapping = scale(inst.subsample_mapping)
+    P = np.linalg.solve(Ds, inst.subsample_mapping)
+
+
 
     return init2D
 
