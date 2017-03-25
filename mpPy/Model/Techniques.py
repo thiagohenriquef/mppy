@@ -47,10 +47,10 @@ class Pekalska(Matrix):
     """
     def __init__(self, matrix,
                  subsample_indices = None,
-                 subsample_mapping = None):
+                 sample_data = None):
         super().__init__(matrix)
         self.subsample_indices = subsample_indices
-        self.subsample_mapping = subsample_mapping
+        self.sample_data = sample_data
 
 class PLMP(Matrix):
     """

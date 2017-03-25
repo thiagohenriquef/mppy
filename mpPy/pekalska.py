@@ -20,16 +20,23 @@ def pekalska(inst):
         inst.subsample_indices = np.random.randint(0, inst.instances - 1, int(3.0 * np.sqrt(inst.instances)))
 
     Ds = inst.data_matrix[inst.subsample_indices, :]
-    if inst.subsample_mapping is None:
+    distance_matrix_Ds = squareform(pdist(Ds))
+    if inst.sample_data is None:
         from mpPy.forceScheme import force2D
         from mpPy.Model.Techniques import ForceScheme
         f = ForceScheme(Ds)
-        inst.subsample_mapping = force2D(f)
+        inst.sample_data = force2D(f)
 
-    inst.subsample_mapping = scale(inst.subsample_mapping)
-    P = np.linalg.solve(Ds, inst.subsample_mapping)
-
-
+    inst.sample_data = scale(inst.sample_data)
+    x, residuals, rank, s = np.linalg.lstsq(distance_matrix_Ds,inst.sample_data)
+    #P = np.linalg.solve(distance_matrix_Ds, inst.sample_data)
+    init2D = np.zeros((inst.instances, inst.sample_data.shape[1]))
+    init2D[inst.subsample_indices, :] = inst.sample_data
+    for j in range(inst.instances):
+        if j in inst.subsample_indices:
+            continue
+        else:
+            init2D[j,:] = np.dot(distance_matrix[j, inst.subsample_indices], x)
 
     return init2D
 
@@ -47,7 +54,7 @@ def code():
         bidimensional_plot = pekalska(inst)
 
         from mpPy.Model.Plot import Plot
-        p = Plot(bidimensional_plot, inst.clusters(), matrix)
+        p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 
     except Exception as e:
