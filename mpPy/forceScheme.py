@@ -43,6 +43,7 @@ def force2D(inst):
                 init2D[instance2,0] += delta * (x1x2 / dr2)
                 init2D[instance2,1] += delta * (y1y2 / dr2)
 
+    inst.initial_2D_matrix = init2D
     return init2D
 
 def code():
@@ -57,6 +58,10 @@ def code():
         matrix = r.reader_file(file)
         inst = ForceScheme(matrix)
         bidimensional_plot = force2D(inst)
+
+        from tests.Stress import KruskalStress
+        k = KruskalStress(inst)
+        print(k.calculate())
 
         from mpPy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
