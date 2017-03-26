@@ -12,10 +12,10 @@ except ImportError as e:
     print("Scikit Learn: http://scikit-learn.org/stable/")
 
 
-def lsp_2D(inst):
+def lsp2d(inst):
     from scipy.spatial.distance import pdist, squareform
-    from mpPy.Model.Techniques import ForceScheme
-    from mpPy.forceScheme import force2D
+    from mppy.Model.Techniques import ForceScheme
+    from mppy.forceScheme import force2D
 
     init2D = inst.initial_2D_matrix
     distance_matrix = squareform(pdist(inst.data_matrix))
@@ -50,14 +50,18 @@ def lsp_2D(inst):
 
     Y = np.zeros((num_instances, inst.dimensionality))
     L = np.dot(np.transpose(A), A)
+    S = np.linalg.cholesky(L)
+
+    for i in range(inst.dimensionality):
+        pass
 
     init2D = inst.initial_subsample
     return init2D
 
 def code():
     try:
-        from mpPy.Model.Matrix import Matrix, Reader
-        from mpPy.Model.Techniques import LSP
+        from mppy.Model.Matrix import Matrix, Reader
+        from mppy.Model.Techniques import LSP
 
         r = Reader()
         file = "iris.data"
@@ -66,9 +70,9 @@ def code():
         matrix = r.reader_file(file)
         inst = LSP(matrix)
         print(inst.subsample_indices)
-        bidimensional_plot = lsp_2D(inst)
+        bidimensional_plot = lsp2d(inst)
 
-        from mpPy.Model.Plot import Plot
+        from mppy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 

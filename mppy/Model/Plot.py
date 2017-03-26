@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 
 try:
-    from mpPy.Model.Matrix import Matrix
+    from mppy.Model.Matrix import Matrix
     import matplotlib as mpl
     import matplotlib.pyplot as mplpy
 except ImportError:

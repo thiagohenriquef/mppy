@@ -1,6 +1,6 @@
 import numpy
 
-from mpPy.Model.Matrix import Matrix
+from mppy.Model.Matrix import Matrix
 
 
 class ForceScheme(Matrix):

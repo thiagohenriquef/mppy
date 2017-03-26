@@ -12,8 +12,8 @@ except ImportError as e:
 
 
 def lamp2D(inst):
-    from mpPy.Model.Techniques import ForceScheme
-    from mpPy.forceScheme import force2D
+    from mppy.Model.Techniques import ForceScheme
+    from mppy.forceScheme import force2D
 
     if inst.subsample_indices is None:
         inst.subsample_indices = np.random.randint(0, inst.instances-1, int(3.0 * np.sqrt(inst.instances)))
@@ -74,12 +74,13 @@ def lamp2D(inst):
         M = np.dot(U, aux)
         projection[i] = np.dot((point - Xtil), M) + Ytil
 
+    inst.initial_2D_matrix = projection
     return projection
 
 def code():
     try:
-        from mpPy.Model.Matrix import Matrix, Reader
-        from mpPy.Model.Techniques import LAMP
+        from mppy.Model.Matrix import Matrix, Reader
+        from mppy.Model.Techniques import LAMP
 
         r = Reader()
         file = "iris.data"
@@ -89,7 +90,11 @@ def code():
         inst = LAMP(matrix)
         bidimensional_plot = lamp2D(inst)
 
-        from mpPy.Model.Plot import Plot
+        from tests.Stress import KruskalStress
+        k = KruskalStress(inst)
+        print(k.calculate())
+
+        from mppy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 

@@ -22,8 +22,8 @@ def pekalska(inst):
     Ds = inst.data_matrix[inst.subsample_indices, :]
     distance_matrix_Ds = squareform(pdist(Ds))
     if inst.sample_data is None:
-        from mpPy.forceScheme import force2D
-        from mpPy.Model.Techniques import ForceScheme
+        from mppy.forceScheme import force2D
+        from mppy.Model.Techniques import ForceScheme
         f = ForceScheme(Ds)
         inst.sample_data = force2D(f)
 
@@ -38,12 +38,13 @@ def pekalska(inst):
         else:
             init2D[j,:] = np.dot(distance_matrix[j, inst.subsample_indices], x)
 
+    inst.initial_2D_matrix = init2D
     return init2D
 
 def code():
     try:
-        from mpPy.Model.Matrix import Matrix, Reader
-        from mpPy.Model.Techniques import Pekalska
+        from mppy.Model.Matrix import Matrix, Reader
+        from mppy.Model.Techniques import Pekalska
 
         r = Reader()
         file = "iris.data"
@@ -53,7 +54,11 @@ def code():
         inst = Pekalska(matrix)
         bidimensional_plot = pekalska(inst)
 
-        from mpPy.Model.Plot import Plot
+        from tests.Stress import KruskalStress
+        k = KruskalStress(inst)
+        print(k.calculate())
+
+        from mppy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 

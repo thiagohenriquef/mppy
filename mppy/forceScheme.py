@@ -48,8 +48,9 @@ def force2D(inst):
 
 def code():
     try:
-        from mpPy.Model.Matrix import Matrix, Reader
-        from mpPy.Model.Techniques import ForceScheme
+        from mppy.Model.Matrix import Matrix, Reader
+        from mppy.Model.Techniques import ForceScheme
+        import time
 
         r = Reader()
         file = "iris.data"
@@ -57,13 +58,15 @@ def code():
 
         matrix = r.reader_file(file)
         inst = ForceScheme(matrix)
+        start_time = time.time()
         bidimensional_plot = force2D(inst)
+        print(time.time() - start_time)
 
         from tests.Stress import KruskalStress
         k = KruskalStress(inst)
         print(k.calculate())
 
-        from mpPy.Model.Plot import Plot
+        from mppy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 

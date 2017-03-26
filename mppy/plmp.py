@@ -12,9 +12,9 @@ except ImportError as e:
 
 
 def plmp_2d(inst):
-    from mpPy.Model.Techniques import ForceScheme
+    from mppy.Model.Techniques import ForceScheme
     from sklearn.preprocessing import scale
-    from mpPy.forceScheme import force2D
+    from mppy.forceScheme import force2D
 
     init2D = np.zeros((inst.instances, inst.dimensionality))
     #init2D = inst.initial_2D_matrix
@@ -59,8 +59,8 @@ def plmp_2d(inst):
 
 def code():
     try:
-        from mpPy.Model.Matrix import Matrix, Reader
-        from mpPy.Model.Techniques import PLMP
+        from mppy.Model.Matrix import Matrix, Reader
+        from mppy.Model.Techniques import PLMP
 
         r = Reader()
         file = "iris.data"
@@ -70,7 +70,11 @@ def code():
         inst = PLMP(matrix)
         bidimensional_plot = plmp_2d(inst)
 
-        from mpPy.Model.Plot import Plot
+        from tests.Stress import KruskalStress
+        k = KruskalStress(inst)
+        print(k.calculate())
+
+        from mppy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 

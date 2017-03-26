@@ -1,5 +1,5 @@
 from scipy.spatial.distance import squareform, pdist
-from mpPy.Model.Matrix import Matrix
+from mppy.Model.Matrix import Matrix
 import numpy as np
 import traceback
 
