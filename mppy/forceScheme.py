@@ -62,7 +62,7 @@ def code():
         bidimensional_plot = force2D(inst)
         print(time.time() - start_time)
 
-        from tests.Stress import KruskalStress
+        from mppy.tests.Stress import KruskalStress
         k = KruskalStress(inst)
         print(k.calculate())
 

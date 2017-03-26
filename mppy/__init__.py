@@ -1,1 +1,1 @@
-__autor__ = 'thiago henrique ferreira'
+__autor__ = 'Thiago Henrique Ferreira'

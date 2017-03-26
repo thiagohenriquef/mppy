@@ -54,7 +54,7 @@ def code():
         inst = Pekalska(matrix)
         bidimensional_plot = pekalska(inst)
 
-        from tests.Stress import KruskalStress
+        from mppy.tests.Stress import KruskalStress
         k = KruskalStress(inst)
         print(k.calculate())
 

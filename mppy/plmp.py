@@ -70,7 +70,7 @@ def code():
         inst = PLMP(matrix)
         bidimensional_plot = plmp_2d(inst)
 
-        from tests.Stress import KruskalStress
+        from mppy.tests.Stress import KruskalStress
         k = KruskalStress(inst)
         print(k.calculate())
 

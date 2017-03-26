@@ -90,7 +90,7 @@ def code():
         inst = LAMP(matrix)
         bidimensional_plot = lamp2D(inst)
 
-        from tests.Stress import KruskalStress
+        from mppy.tests.Stress import KruskalStress
         k = KruskalStress(inst)
         print(k.calculate())
 

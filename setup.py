@@ -9,5 +9,5 @@ setup(
   url = 'https://github.com/thiagohenriquef/mppy',
   download_url = 'https://github.com/thiagohenriquef/mppy/archive/0.1.tar.gz', # I'll explain this in a second
   keywords = ['multidimensional projection', 'data visualization', 'dimensionality reduction'], # arbitrary keywords
-  classifiers = [],
+  classifiers=['Development Status :: 3 - Alpha','Programming Language :: Python :: 3'],
 )
