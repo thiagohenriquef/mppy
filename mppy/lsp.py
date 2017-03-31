@@ -15,22 +15,32 @@ except ImportError as e:
 def lsp2d(inst):
     from scipy.spatial.distance import pdist, squareform
     from mppy.Model.Techniques import ForceScheme
-    from mppy.forceScheme import force2D
-
+    from mppy.force import force2D
     init2D = inst.initial_2D_matrix
     distance_matrix = squareform(pdist(inst.data_matrix))
-    num_instances = inst.instances
 
-    if inst.subsample_indices is None:
-        inst.subsample_indices = np.random.randint(0, num_instances-1, int(0.1 * num_instances))
-        inst.initial_subsample = None
+    if inst.sample_indices is None:
+        inst.sample_indices = np.random.randint(0, inst.instances, int(inst.instances/10))
 
-    if inst.initial_subsample is None:
-        aux = inst.orig_matrix[inst.subsample_indices, :]
+    if inst.sample_project is None:
+        aux = inst.data_matrix[inst.subsample_indices, :]
         f = ForceScheme(aux)
-        inst.initial_subsample = force2D(f)
+        inst.sample_project = force2D(f)
 
-    nc = len(inst.subsample_indices)
+    int nc = inst.instances + inst.num_neighbors
+
+
+    """
+    if inst.sample_indices is None:
+        inst.sample_indices = np.random.randint(0, num_instances-1, int(0.1 * num_instances))
+        inst.sample_project = None
+
+    if inst.sample_project is None:
+        aux = inst.data_matrix[inst.sample_indices, :]
+        f = ForceScheme(aux)
+        inst.sample_project = force2D(f)
+
+    nc = len(inst.sample_indices)
     A = np.zeros((num_instances + nc, num_instances))
 
     for i in range(num_instances):
@@ -45,17 +55,20 @@ def lsp2d(inst):
             alphas = alphas / np.sum(alphas)
         A[i, neighbors] = alphas
 
-    A[num_instances:nc, inst.subsample_indices[0:nc]] = 1
+    A[num_instances:nc, inst.sample_indices[0:nc]] = 1
     b = np.zeros((num_instances+nc))
-
     Y = np.zeros((num_instances, inst.dimensionality))
     L = np.dot(np.transpose(A), A)
     S = np.linalg.cholesky(L)
 
-    for i in range(inst.dimensionality):
-        pass
 
-    init2D = inst.initial_subsample
+    for j in range(inst.dimensionality):
+        b[num_instances : num_instances+nc] = inst.sample_project[:, j]
+        t = np.dot(np.transpose(A), b)
+        init2D[:, j] = sp.linalg.solve_triangular(S, sp.linalg.solve_triangular(S, t, trans=1))
+
+    init2D[inst.sample_indices, ] = inst.sample_project
+    """
     return init2D
 
 def code():
@@ -69,7 +82,7 @@ def code():
 
         matrix = r.reader_file(file)
         inst = LSP(matrix)
-        print(inst.subsample_indices)
+        print(inst.sample_indices)
         bidimensional_plot = lsp2d(inst)
 
         from mppy.Model.Plot import Plot

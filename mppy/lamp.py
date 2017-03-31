@@ -13,7 +13,7 @@ except ImportError as e:
 
 def lamp2D(inst):
     from mppy.Model.Techniques import ForceScheme
-    from mppy.forceScheme import force2D
+    from mppy.force import force2D
 
     if inst.subsample_indices is None:
         inst.subsample_indices = np.random.randint(0, inst.instances-1, int(3.0 * np.sqrt(inst.instances)))
@@ -83,7 +83,7 @@ def code():
         from mppy.Model.Techniques import LAMP
 
         r = Reader()
-        file = "iris.data"
+        file = "isolet.data"
         print("Carregando conjunto de dados ", file)
 
         matrix = r.reader_file(file)

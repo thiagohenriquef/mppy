@@ -14,46 +14,49 @@ except ImportError as e:
 def plmp_2d(inst):
     from mppy.Model.Techniques import ForceScheme
     from sklearn.preprocessing import scale
-    from mppy.forceScheme import force2D
+    from mppy.force import force2D
 
     init2D = np.zeros((inst.instances, inst.dimensionality))
     #init2D = inst.initial_2D_matrix
-    if inst.subsample_indices is None:
-        inst.subsample_indices = np.random.randint(0, inst.instances-1, int(3.0 * np.sqrt(inst.instances)))
+    if inst.sample_indices is None:
+        inst.sample_indices = np.random.randint(0, inst.instances - 1, int(3.0 * np.sqrt(inst.instances)))
 
-    Xs = inst.data_matrix[inst.subsample_indices, :]
+    Xs = inst.data_matrix[inst.sample_indices, :]
 
-    if inst.subsample_control_points is None:
-        aux = inst.data_matrix[inst.subsample_indices, :]
+    if inst.sample_data is None:
+        aux = inst.data_matrix[inst.sample_indices, :]
         f = ForceScheme(aux)
-        inst.subsample_control_points = force2D(f)
+        inst.sample_data = force2D(f)
 
-    if inst.subsample_indices is None:
-        inst.subsample_indices = np.random.randint(0, inst.instances-1, int(3.0 * np.sqrt(inst.instances)))
+    if inst.sample_indices is None:
+        inst.sample_indices = np.random.randint(0, inst.instances - 1, int(3.0 * np.sqrt(inst.instances)))
 
-    Xs = inst.data_matrix[inst.subsample_indices, :]
+    Xs = inst.data_matrix[inst.sample_indices, :]
 
-    if inst.subsample_control_points is None:
-        aux = inst.data_matrix[inst.subsample_indices, :]
+    if inst.sample_data is None:
+        aux = inst.data_matrix[inst.sample_indices, :]
         f = ForceScheme(aux)
-        inst.subsample_control_points = force2D(f)
+        inst.sample_data = force2D(f)
 
-    Ys = scale(inst.subsample_control_points)
-    P = np.zeros((inst.dimensions, inst.dimensionality))
+    Ys = scale(inst.sample_data)
+    proj_aux = np.zeros((inst.dimensions, inst.dimensionality))
     A = np.dot(np.transpose(Xs), Xs)
-    L = sp.linalg.cholesky(A)
+    P, L, U = sp.linalg.lu(A)
+    #D = sp.linalg.cholesky(A)
+    # print(P, L, U)
+    # print(np.linalg.eigvalsh(A))
 
     for i in range(inst.dimensionality):
         b = np.dot(np.transpose(Xs), Ys[:, i])
-        P[:,i] = sp.linalg.solve_triangular(L, sp.linalg.solve_triangular(L, b, trans=1))
+        proj_aux[:,i] = sp.linalg.solve_triangular(U, sp.linalg.solve_triangular(U, b, trans=1))
+    init2D[inst.sample_indices, :] = Ys
 
-    init2D[inst.subsample_indices, : ] = Ys
 
     for j in range(inst.instances):
-        if j in inst.subsample_indices:
+        if j in inst.sample_indices:
             continue
         else:
-            init2D[j,:] = np.dot(inst.data_matrix[j,:],P)
+            init2D[j,:] = np.dot(inst.data_matrix[j,:],proj_aux)
 
     return init2D
 
@@ -63,7 +66,7 @@ def code():
         from mppy.Model.Techniques import PLMP
 
         r = Reader()
-        file = "iris.data"
+        file = "isolet.data"
         print("Carregando conjunto de dados ", file)
 
         matrix = r.reader_file(file)

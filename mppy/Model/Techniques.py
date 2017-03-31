@@ -2,7 +2,6 @@ import numpy
 
 from mppy.Model.Matrix import Matrix
 
-
 class ForceScheme(Matrix):
     """
     Force Scheme Projection
@@ -28,14 +27,14 @@ class LSP(Matrix):
     """
 
     def __init__(self, matrix,
-                 subsample_indices = None,
-                 initial_subsample=None,
+                 sample_indices = None,
+                 sample_project=None,
                  num_neighbors = 15,
                  dimensionality = 2):
 
         super().__init__(matrix)
-        self.subsample_indices = subsample_indices
-        self.initial_subsample = initial_subsample
+        self.sample_indices = sample_indices
+        self.sample_project = sample_project
         self.num_neighbors = num_neighbors
         self.dimensionality = dimensionality
 
@@ -59,12 +58,12 @@ class PLMP(Matrix):
 
     """
     def __init__(self, matrix,
-                 subsample_indices = None,
-                 subsample_control_points = None,
+                 sample_indices = None,
+                 sample_data = None,
                  dimensionality = 2):
         super().__init__(matrix)
-        self.subsample_indices = subsample_indices
-        self.subsample_control_points = subsample_control_points
+        self.sample_indices = sample_indices
+        self.sample_data = sample_data
         self.dimensionality = dimensionality
 
 class LAMP(Matrix):
@@ -82,3 +81,16 @@ class LAMP(Matrix):
         self.subsample_indices = subsample_indices
         self.initial_sample = initial_sample
         self.proportion = proportion
+
+class Sammon(Matrix):
+    """
+    Piecewise Laplacian Projection
+    """
+    def __init__(self, matrix,
+                 num_iterations = 50,
+                 magic_factor = 0.03,
+                 tolerance = 0.0):
+        super().__init__(matrix)
+        self.num_iterations = num_iterations
+        self.magic_factor = magic_factor
+        self.tolerance = tolerance

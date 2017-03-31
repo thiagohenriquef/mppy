@@ -8,5 +8,8 @@ Force Scheme -> OK <p>
 LAMP -> OK <p>
 LSP -> Not OK <p>
 Pekalska -> OK <p>
-PLMP -> OK <p>
+PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
+Sammon -> Not OK <p>
+PLP -> Not Ok <p>
+fastmap -> Not OK <p>
 
