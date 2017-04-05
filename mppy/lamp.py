@@ -1,28 +1,44 @@
 try:
     import numpy as np
     import scipy as sp
-    import sklearn as sk
     import matplotlib as mpl
     import traceback
+    import mppy.force as force
+    from mppy.model.matrix import Matrix, Reader
+    from mppy.stress import calculate_kruskal_stress
 except ImportError as e:
     print("Please install the following packages: ")
     print("Numpy: http://www.numpy.org/")
     print("Scipy: https://www.scipy.org/")
     print("Scikit Learn: http://scikit-learn.org/stable/")
 
+class LAMP(Matrix):
+    """
+
+    Local Affine Multidimensional Projection
+
+    """
+
+    def __init__(self, matrix,
+                 proportion = 1,
+                 subsample_indices = None,
+                 initial_sample = None):
+        super().__init__(matrix)
+        self.subsample_indices = subsample_indices
+        self.initial_sample = initial_sample
+        self.proportion = proportion
+
 
 def lamp2D(inst):
-    from mppy.Model.Techniques import ForceScheme
-    from mppy.force import force2D
 
     if inst.subsample_indices is None:
-        inst.subsample_indices = np.random.randint(0, inst.instances-1, int(3.0 * np.sqrt(inst.instances)))
+        inst.subsample_indices = np.random.randint(0, inst.instances-1, int(1.0 * np.sqrt(inst.instances)))
         inst.initial_sample = None
 
     if inst.initial_sample is None:
         aux = inst.data_matrix[inst.subsample_indices, :]
-        f = ForceScheme(aux)
-        inst.initial_sample = force2D(f)
+        f = force.ForceScheme(aux)
+        inst.initial_sample = force.code(f)
 
     Xs = np.array((inst.data_matrix[inst.subsample_indices, :]))
     projection = inst.initial_2D_matrix.copy()
@@ -79,23 +95,17 @@ def lamp2D(inst):
 
 def code():
     try:
-        from mppy.Model.Matrix import Matrix, Reader
-        from mppy.Model.Techniques import LAMP
-
         r = Reader()
-        file = "isolet.data"
+        file = "iris.data"
         print("Carregando conjunto de dados ", file)
 
         matrix = r.reader_file(file)
         inst = LAMP(matrix)
-        bidimensional_plot = lamp2D(inst)
+        result = lamp2D(inst)
 
-        from mppy.tests.Stress import KruskalStress
-        k = KruskalStress(inst)
-        print(k.calculate())
-
-        from mppy.Model.Plot import Plot
-        p = Plot(bidimensional_plot, inst.clusters, matrix)
+        print("Stress: ", calculate_kruskal_stress(inst.data_matrix, result))
+        from mppy.model.plot import Plot
+        p = Plot(result, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 
     except Exception as e:

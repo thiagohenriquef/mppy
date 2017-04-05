@@ -1,80 +1,73 @@
 try:
     import numpy as np
     import scipy as sp
-    import sklearn as sk
     import matplotlib as mpl
     import traceback
-    np.seterr(divide='ignore', invalid='ignore')
+    import mppy.force as force
+    from scipy.spatial.distance import pdist, squareform
+    from mppy.model.matrix import Matrix, Reader
+    from mppy.model.plot import Plot
 except ImportError as e:
     print("Please install the following packages: ")
     print("Numpy: http://www.numpy.org/")
     print("Scipy: https://www.scipy.org/")
     print("Scikit Learn: http://scikit-learn.org/stable/")
 
+class LSP(Matrix):
+    """
 
-def lsp2d(inst):
-    from scipy.spatial.distance import pdist, squareform
-    from mppy.Model.Techniques import ForceScheme
-    from mppy.force import force2D
-    init2D = inst.initial_2D_matrix
-    distance_matrix = squareform(pdist(inst.data_matrix))
-
-    if inst.sample_indices is None:
-        inst.sample_indices = np.random.randint(0, inst.instances, int(inst.instances/10))
-
-    if inst.sample_project is None:
-        aux = inst.data_matrix[inst.subsample_indices, :]
-        f = ForceScheme(aux)
-        inst.sample_project = force2D(f)
-
-    int nc = inst.instances + inst.num_neighbors
-
+    Least Square Projeciton
 
     """
+
+    def __init__(self, matrix,
+                 sample_indices = None,
+                 sample_project=None,
+                 num_neighbors = 15,
+                 dimensionality = 2):
+
+        super().__init__(matrix)
+        self.sample_indices = sample_indices
+        self.sample_project = sample_project
+        self.num_neighbors = num_neighbors
+        self.dimensionality = dimensionality
+
+
+def lsp2d(inst):
+    init2D = inst.initial_2D_matrix
+
     if inst.sample_indices is None:
-        inst.sample_indices = np.random.randint(0, num_instances-1, int(0.1 * num_instances))
+        inst.sample_indices = np.random.randint(0, inst.instances-1, int(0.1 * np.sqrt(inst.instances)))
         inst.sample_project = None
 
     if inst.sample_project is None:
         aux = inst.data_matrix[inst.sample_indices, :]
-        f = ForceScheme(aux)
-        inst.sample_project = force2D(f)
+        f = force.ForceScheme(aux)
+        inst.sample_project = force.code(f)
 
-    nc = len(inst.sample_indices)
-    A = np.zeros((num_instances + nc, num_instances))
+    nc = inst.sample_indices.shape[0]
+    A = np.zeros((inst.instances+nc, inst.instances))
 
-    for i in range(num_instances):
-        neighbors = np.argsort(distance_matrix[i, :])[1:inst.num_neighbors]
-        A[i,i] = 1
-        alphas = distance_matrix[i, neighbors]
-        if(any(alphas < 1e-6)):
-            alphas[alphas < 1e-6] = 1
+    Dx = squareform(pdist(inst.data_matrix))
+    for i in range(inst.instances):
+        neighbors = np.argsort(Dx[i, :])[1:inst.num_neighbors+1]
+        A[i,i] = 1.0
+        alphas = Dx[i, neighbors]
+        if any(alphas < 1e-9):
+            for j in range(len(alphas)):
+                if j < 1e-9:
+                    alphas = 0.0
+                    alphas[j] = 1.0
         else:
-            alphas = 1 / alphas
+            alphas = 1/alphas
             alphas = alphas / np.sum(alphas)
             alphas = alphas / np.sum(alphas)
-        A[i, neighbors] = alphas
 
-    A[num_instances:nc, inst.sample_indices[0:nc]] = 1
-    b = np.zeros((num_instances+nc))
-    Y = np.zeros((num_instances, inst.dimensionality))
-    L = np.dot(np.transpose(A), A)
-    S = np.linalg.cholesky(L)
+        A[i, neighbors] = -alphas
 
-
-    for j in range(inst.dimensionality):
-        b[num_instances : num_instances+nc] = inst.sample_project[:, j]
-        t = np.dot(np.transpose(A), b)
-        init2D[:, j] = sp.linalg.solve_triangular(S, sp.linalg.solve_triangular(S, t, trans=1))
-
-    init2D[inst.sample_indices, ] = inst.sample_project
-    """
-    return init2D
 
 def code():
     try:
-        from mppy.Model.Matrix import Matrix, Reader
-        from mppy.Model.Techniques import LSP
 
         r = Reader()
         file = "iris.data"
@@ -85,7 +78,6 @@ def code():
         print(inst.sample_indices)
         bidimensional_plot = lsp2d(inst)
 
-        from mppy.Model.Plot import Plot
         p = Plot(bidimensional_plot, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 

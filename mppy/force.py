@@ -1,18 +1,27 @@
-try:
-    import numpy as np
-    import scipy as sp
-    import sklearn as sk
-    import matplotlib as mpl
-    import traceback
-except ImportError as e:
-    print("Please install the following packages: ")
-    print("Numpy: http://www.numpy.org/")
-    print("Scipy: https://www.scipy.org/")
-    print("Scikit Learn: http://scikit-learn.org/stable/")
+import numpy as np
+import traceback
+from scipy.spatial.distance import pdist, squareform
+from mppy.stress import calculate_kruskal_stress
+from mppy.model.matrix import Matrix
+from mppy.model.plot import Plot
+
+class ForceScheme(Matrix):
+    """
+    Force Scheme Projection
+
+    """
+
+    def __init__(self, matrix,
+                 max_iterations=50,
+                 fraction_of_delta=8.0,
+                 epsilon=1e-6):
+        super().__init__(matrix)
+        self.max_iterations = max_iterations
+        self.fraction_of_delta = fraction_of_delta
+        self.epsilon = epsilon
 
 
-def force2D(inst):
-    from scipy.spatial.distance import pdist, squareform
+def code(inst):
     init2D = inst.initial_2D_matrix
     distance_matrix = squareform(pdist(inst.data_matrix))
     num_instances = inst.instances
@@ -46,10 +55,10 @@ def force2D(inst):
     inst.initial_2D_matrix = init2D
     return init2D
 
-def code():
+
+def force_2d():
     try:
-        from mppy.Model.Matrix import Matrix, Reader
-        from mppy.Model.Techniques import ForceScheme
+        from mppy.model.matrix import Matrix, Reader
         import time
 
         r = Reader()
@@ -58,21 +67,19 @@ def code():
 
         matrix = r.reader_file(file)
         inst = ForceScheme(matrix)
+
         start_time = time.time()
-        bidimensional_plot = force2D(inst)
-        print(time.time() - start_time)
+        result = code(inst)
+        print(time.time() - start_time, "seconds")
 
-        from mppy.tests.Stress import KruskalStress
-        k = KruskalStress(inst)
-        print(k.calculate())
+        print("Stress: ", calculate_kruskal_stress(inst.data_matrix, result))
 
-        from mppy.Model.Plot import Plot
-        p = Plot(bidimensional_plot, inst.clusters, matrix)
+
+        p = Plot(result, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
-
     except Exception as e:
         print(traceback.print_exc())
 
 
 if __name__ == "__main__":
-    code()
+    force_2d()

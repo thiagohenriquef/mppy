@@ -1,42 +1,50 @@
-try:
-    import numpy as np
-    import scipy as sp
-    import sklearn as sk
-    import matplotlib as mpl
-    import traceback
-except ImportError as e:
-    print("Please install the following packages: ")
-    print("Numpy: http://www.numpy.org/")
-    print("Scipy: https://www.scipy.org/")
-    print("Scikit Learn: http://scikit-learn.org/stable/")
+import numpy as np
+import scipy as sp
+import matplotlib as mpl
+import traceback
+import mppy.force as force
+from sklearn.preprocessing import scale
+from mppy.model.matrix import Matrix, Reader
+from mppy.model.plot import Plot
+from mppy.stress import calculate_kruskal_stress
+
+class PLMP(Matrix):
+    """
+
+    Part-Linear Multidimensional Projection
+
+    """
+    def __init__(self, matrix,
+                 sample_indices = None,
+                 sample_data = None,
+                 dimensionality = 2):
+        super().__init__(matrix)
+        self.sample_indices = sample_indices
+        self.sample_data = sample_data
+        self.dimensionality = dimensionality
 
 
 def plmp_2d(inst):
-    from mppy.Model.Techniques import ForceScheme
-    from sklearn.preprocessing import scale
-    from mppy.force import force2D
-
     init2D = np.zeros((inst.instances, inst.dimensionality))
-    #init2D = inst.initial_2D_matrix
     if inst.sample_indices is None:
-        inst.sample_indices = np.random.randint(0, inst.instances - 1, int(3.0 * np.sqrt(inst.instances)))
+        inst.sample_indices = np.random.randint(0, inst.instances - 1, int(1.0 * np.sqrt(inst.instances)))
 
     Xs = inst.data_matrix[inst.sample_indices, :]
 
     if inst.sample_data is None:
         aux = inst.data_matrix[inst.sample_indices, :]
-        f = ForceScheme(aux)
-        inst.sample_data = force2D(f)
+        f = force.ForceScheme(aux)
+        inst.sample_data = force.code(f)
 
     if inst.sample_indices is None:
-        inst.sample_indices = np.random.randint(0, inst.instances - 1, int(3.0 * np.sqrt(inst.instances)))
+        inst.sample_indices = np.random.randint(0, inst.instances - 1, int(1.0 * np.sqrt(inst.instances)))
 
     Xs = inst.data_matrix[inst.sample_indices, :]
 
     if inst.sample_data is None:
         aux = inst.data_matrix[inst.sample_indices, :]
-        f = ForceScheme(aux)
-        inst.sample_data = force2D(f)
+        f = force.ForceScheme(aux)
+        inst.sample_data = force.code(f)
 
     Ys = scale(inst.sample_data)
     proj_aux = np.zeros((inst.dimensions, inst.dimensionality))
@@ -60,25 +68,20 @@ def plmp_2d(inst):
 
     return init2D
 
+
 def code():
     try:
-        from mppy.Model.Matrix import Matrix, Reader
-        from mppy.Model.Techniques import PLMP
-
         r = Reader()
-        file = "isolet.data"
+        file = "iris.data"
         print("Carregando conjunto de dados ", file)
 
         matrix = r.reader_file(file)
         inst = PLMP(matrix)
-        bidimensional_plot = plmp_2d(inst)
+        result = plmp_2d(inst)
 
-        from mppy.tests.Stress import KruskalStress
-        k = KruskalStress(inst)
-        print(k.calculate())
+        print("Stress: ", calculate_kruskal_stress(inst.data_matrix, result))
 
-        from mppy.Model.Plot import Plot
-        p = Plot(bidimensional_plot, inst.clusters, matrix)
+        p = Plot(result, inst.clusters, matrix)
         p.semi_interactive_scatter_plot()
 
     except Exception as e:
