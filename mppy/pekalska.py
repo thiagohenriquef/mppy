@@ -16,7 +16,7 @@ def pekalska_2d(matrix, sample_indices=None, inital_sample=None):
 
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
+        sample_indices = np.random.randint(0, instances - 1, int(3.0 * np.sqrt(instances)))
 
     Ds = data_matrix[sample_indices, :]
     if inital_sample is None:
@@ -30,7 +30,7 @@ def pekalska_2d(matrix, sample_indices=None, inital_sample=None):
 
     #criando base Y
     Y = np.zeros((n_rows, 2))
-    Y = inital_sample
+    Y = inital_sample.copy()
 
     #encontrar o V
     P, L, U = sp.linalg.lu(D)
@@ -44,14 +44,10 @@ def pekalska_2d(matrix, sample_indices=None, inital_sample=None):
         dists = np.zeros((inital_sample.shape[0]))
 
         for j in range(len(dists)):
-            n1 = np.linalg.norm(row)
-            n2 = np.linalg.norm(Ds[j])
-            value = np.sqrt(abs(n1*n1+n2*n2-2*np.dot(n1,n2)))
-            #dists[j] = np.linalg.norm(row - Ds[j])
-            dists[j] = value
+            dists[j] = np.linalg.norm(row - Ds[j,:])
 
-        matrix_2d[i,0] = np.dot(dists, V[0])
-        matrix_2d[i,1] = np.dot(dists, V[1])
+        matrix_2d[i,0] = np.dot(dists, V[0,:])
+        matrix_2d[i,1] = np.dot(dists, V[1,:])
 
     print("Algorithm execution: %s seconds" % (time.time() - start_time))
     print("Stress: %s" % calculate_kruskal_stress(data_matrix, matrix_2d))
