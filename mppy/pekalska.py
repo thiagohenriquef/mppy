@@ -1,38 +1,28 @@
 import numpy as np
 import scipy as sp
-import traceback
-import mppy.force as force
-from mppy.model.matrix import Reader, Matrix
 from scipy.spatial.distance import pdist, squareform
-
-class Pekalska(Matrix):
-    """
-
-    Pekalska Approximation
-
-    """
-    def __init__(self, matrix,
-                 subsample_indices = None,
-                 sample_data = None):
-        super().__init__(matrix)
-        self.subsample_indices = subsample_indices
-        self.sample_data = sample_data
+import mppy.force as force
+from mppy.stress import calculate_kruskal_stress
+import time
 
 
-def pekalska(inst):
-    #from sklearn.preprocessing import scale
-    #distance_matrix = squareform(pdist(inst.data_matrix))
+def pekalska_2d(matrix, sample_indices=None, inital_sample=None):
+    orig_matrix = matrix
+    # data_matrix = matrix[:, :-1]
+    data_matrix = orig_matrix.copy()
+    instances = orig_matrix.shape[0]
+    dimensions = orig_matrix.shape[1] - 1
+    matrix_2d = np.random.random((instances, 2))
 
-    if inst.subsample_indices is None:
-        inst.subsample_indices = np.random.randint(0, inst.instances - 1, int(1.0 * np.sqrt(inst.instances)))
+    start_time = time.time()
+    if sample_indices is None:
+        sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
 
-    Ds = inst.data_matrix[inst.subsample_indices, :]
-    if inst.sample_data is None:
-        f = force.ForceScheme(Ds)
-        inst.sample_data = force.code(f)
+    Ds = data_matrix[sample_indices, :]
+    if inital_sample is None:
+        inital_sample = force._force(Ds)
 
-    init2D = inst.initial_2D_matrix
-    n_rows, n_cols = inst.sample_data.shape
+    n_rows, n_cols = inital_sample.shape
 
     # criando base D
     D = np.zeros((n_rows, n_rows))
@@ -40,46 +30,30 @@ def pekalska(inst):
 
     #criando base Y
     Y = np.zeros((n_rows, 2))
-    Y = inst.sample_data
+    Y = inital_sample
 
     #encontrar o V
     P, L, U = sp.linalg.lu(D)
+    #L = sp.linalg.cholesky(D)
     result = np.linalg.solve(L, Y)
     V = np.transpose(result)
 
     #calculando a projeção
-    for i in range(inst.instances):
-        row = inst.data_matrix[i, :]
-        dists = np.zeros((inst.sample_data.shape[0]))
+    for i in range(instances):
+        row = data_matrix[i, :]
+        dists = np.zeros((inital_sample.shape[0]))
 
         for j in range(len(dists)):
-            dists[j] = np.linalg.norm(row - Ds[j])
+            n1 = np.linalg.norm(row)
+            n2 = np.linalg.norm(Ds[j])
+            value = np.sqrt(abs(n1*n1+n2*n2-2*np.dot(n1,n2)))
+            #dists[j] = np.linalg.norm(row - Ds[j])
+            dists[j] = value
 
-        init2D[i,0] = np.dot(dists, V[0])
-        init2D[i,1] = np.dot(dists, V[1])
+        matrix_2d[i,0] = np.dot(dists, V[0])
+        matrix_2d[i,1] = np.dot(dists, V[1])
 
-    inst.initial_2D_matrix = init2D
-    return init2D
+    print("Algorithm execution: %s seconds" % (time.time() - start_time))
+    print("Stress: %s" % calculate_kruskal_stress(data_matrix, matrix_2d))
 
-def code():
-    try:
-        r = Reader()
-        file = "iris.data"
-        print("Carregando conjunto de dados ", file)
-
-        matrix = r.reader_file(file)
-        inst = Pekalska(matrix)
-        bidimensional_plot = pekalska(inst)
-
-        from mppy import stress
-        print("Stres: ", stress.calculate_kruskal_stress(matrix, bidimensional_plot))
-        from mppy.model.plot import Plot
-        p = Plot(bidimensional_plot, inst.clusters, matrix)
-        p.semi_interactive_scatter_plot()
-
-    except Exception as e:
-        print(traceback.print_exc())
-
-
-if __name__ == "__main__":
-    code()
+    return matrix_2d

@@ -1,58 +1,39 @@
-try:
-    import numpy as np
-    import scipy as sp
-    import matplotlib as mpl
-    import traceback
-    import mppy.force as force
-    from mppy.model.matrix import Matrix, Reader
-    from mppy.stress import calculate_kruskal_stress
-except ImportError as e:
-    print("Please install the following packages: ")
-    print("Numpy: http://www.numpy.org/")
-    print("Scipy: https://www.scipy.org/")
-    print("Scikit Learn: http://scikit-learn.org/stable/")
-
-class LAMP(Matrix):
-    """
-
-    Local Affine Multidimensional Projection
-
-    """
-
-    def __init__(self, matrix,
-                 proportion = 1,
-                 subsample_indices = None,
-                 initial_sample = None):
-        super().__init__(matrix)
-        self.subsample_indices = subsample_indices
-        self.initial_sample = initial_sample
-        self.proportion = proportion
+import numpy as np
+import scipy as sp
+from mppy.stress import calculate_kruskal_stress
+from mppy.force import _force
+import time
 
 
-def lamp2D(inst):
+def lamp_2d(matrix, sample_indices=None, initial_sample=None, proportion=1):
+    orig_matrix = matrix
+    # data_matrix = matrix[:, :-1]
+    data_matrix = orig_matrix.copy()
+    instances = orig_matrix.shape[0]
+    dimensions = orig_matrix.shape[1] - 1
+    matrix_2d = np.random.random((instances, 2))
 
-    if inst.subsample_indices is None:
-        inst.subsample_indices = np.random.randint(0, inst.instances-1, int(1.0 * np.sqrt(inst.instances)))
-        inst.initial_sample = None
+    start_time = time.time()
+    if sample_indices is None:
+        sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
+        initial_sample = None
 
-    if inst.initial_sample is None:
-        aux = inst.data_matrix[inst.subsample_indices, :]
-        f = force.ForceScheme(aux)
-        inst.initial_sample = force.code(f)
+    if initial_sample is None:
+        aux = data_matrix[sample_indices, :]
+        initial_sample = _force(aux)
 
-    Xs = np.array((inst.data_matrix[inst.subsample_indices, :]))
-    projection = inst.initial_2D_matrix.copy()
-    for i in range(inst.instances):
-        point = np.array(inst.data_matrix[i, :])
+    Xs = np.array((data_matrix[sample_indices, :]))
+    for i in range(instances):
+        point = np.array(data_matrix[i, :])
 
         #calculating alphas
         skip = False
-        alphas = np.zeros((len(inst.initial_sample)))
-        for j in range(len(inst.initial_sample)):
+        alphas = np.zeros((len(initial_sample)))
+        for j in range(len(initial_sample)):
             dist = np.sum(sp.square(Xs[j,:] - point))
             if dist < 1e-6:
                 #ponto muito perto do sample point
-                projection[i, :] = inst.initial_sample[j, :]
+                matrix_2d[i, :] = initial_sample[j, :]
                 skip = True
                 break
 
@@ -61,56 +42,37 @@ def lamp2D(inst):
         if skip is True:
             continue
 
-        c = len(inst.initial_sample) * inst.proportion
-        if c < len(inst.initial_sample):
+        c = len(initial_sample) * proportion
+        if c < len(initial_sample):
             index = alphas[np.argsort(-temp)]
             j = c
-            for j in range(len(inst.initial_sample)):
+            for j in range(len(initial_sample)):
                 alphas[index[j]] = 0
         alphas_sum = np.sum(alphas)
 
         #calculate \til{x} and \til{Y}
-        #print(alphas.shape, Xs.shape, inst.initial_sample.shape, alphas_sum.shape)
+        #print(alphas.shape, Xs.shape, matrix.initial_sample.shape, alphas_sum.shape)
         Xtil = np.dot(alphas, Xs) / alphas_sum
-        Ytil = np.dot(alphas, inst.initial_sample) / alphas_sum
+        Ytil = np.dot(alphas, initial_sample) / alphas_sum
 
         #calculate \hat{X} and \hat{Y}
         Xhat = Xs
         Xhat[:, ] -= Xtil
-        Yhat = inst.initial_sample
+        Yhat = initial_sample
         Yhat[:,] -= Ytil
 
         d = np.dot(np.transpose(Xhat),Yhat)
         U, s, V = sp.linalg.svd(np.dot(np.transpose(Xhat),Yhat))
-        aux = np.zeros((inst.dimensions, inst.initial_2D_matrix.shape[1]))
+        #aux = np.zeros((dimensions, matrix_2d.shape[1]))
+        aux = np.zeros((orig_matrix.shape[1], matrix_2d.shape[1]))
 
-        for k in range(inst.initial_2D_matrix.shape[1]):
-            aux[k, range(inst.initial_2D_matrix.shape[1])] = V[k]
+        for k in range(matrix_2d.shape[1]):
+            aux[k, range(matrix_2d.shape[1])] = V[k]
 
         M = np.dot(U, aux)
-        projection[i] = np.dot((point - Xtil), M) + Ytil
+        matrix_2d[i] = np.dot((point - Xtil), M) + Ytil
 
-    inst.initial_2D_matrix = projection
-    return projection
+    print("Algorithm execution: %s seconds" % (time.time() - start_time))
+    print("Stress: %s" % calculate_kruskal_stress(data_matrix, matrix_2d))
 
-def code():
-    try:
-        r = Reader()
-        file = "iris.data"
-        print("Carregando conjunto de dados ", file)
-
-        matrix = r.reader_file(file)
-        inst = LAMP(matrix)
-        result = lamp2D(inst)
-
-        print("Stress: ", calculate_kruskal_stress(inst.data_matrix, result))
-        from mppy.model.plot import Plot
-        p = Plot(result, inst.clusters, matrix)
-        p.semi_interactive_scatter_plot()
-
-    except Exception as e:
-        print(traceback.print_exc())
-
-
-if __name__ == "__main__":
-    code()
+    return matrix_2d
