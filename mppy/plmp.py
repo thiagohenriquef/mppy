@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 from sklearn.preprocessing import scale
 import mppy.force as force
+import mppy.sammon as sammon
 from mppy.stress import calculate_kruskal_stress
 import time
 
@@ -21,7 +22,8 @@ def plmp_2d(matrix, sample_indices=None, sample_data=None, dim=2):
     Xs = data_matrix[sample_indices, :]
     if sample_data is None:
         aux = data_matrix[sample_indices, :]
-        sample_data = force._force(aux)
+        #sample_data = force._force(aux)
+        sample_data = sammon._sammon(aux)
 
     L = np.transpose(Xs)
     for i in range(dim):

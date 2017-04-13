@@ -2,6 +2,7 @@ import numpy as np
 import scipy as sp
 from scipy.spatial.distance import pdist, squareform
 import mppy.force as force
+import mppy.sammon as sammon
 from mppy.stress import calculate_kruskal_stress
 import time
 
@@ -20,7 +21,8 @@ def pekalska_2d(matrix, sample_indices=None, inital_sample=None):
 
     Ds = data_matrix[sample_indices, :]
     if inital_sample is None:
-        inital_sample = force._force(Ds)
+        #inital_sample = force._force(Ds)
+        inital_sample = sammon._sammon(Ds)
 
     n_rows, n_cols = inital_sample.shape
 
