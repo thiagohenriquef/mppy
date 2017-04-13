@@ -9,5 +9,5 @@ LAMP -> OK <p>
 LSP -> OK <p>
 Pekalska -> OK, problem with stress <p>
 PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
-Sammon -> Not OK <p>
+Sammon -> OK <p>
 
