@@ -1,3 +1,5 @@
+__author__ = 'Thiago Henrique Ferreira'
+
 import pkgutil
 import inspect
 

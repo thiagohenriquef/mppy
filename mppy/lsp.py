@@ -1,5 +1,6 @@
 import numpy as np
 from mppy.force import _force
+from mppy.sammon import _sammon
 from scipy.spatial.distance import squareform, pdist
 from mppy.stress import calculate_kruskal_stress
 import time
@@ -29,7 +30,8 @@ def lsp_2d(matrix, sample_indices=None, sample_data=None, k=15, dim=2):
 
     if sample_data is None:
         aux = data_matrix[sample_indices, :]
-        sample_data = _force(aux)
+        #sample_data = _force(aux)
+        sample_data = _sammon(aux)
 
     nc = sample_data.shape[0]
     A = np.zeros((instances+nc, instances))
