@@ -11,8 +11,7 @@ This code is part of my undergraduate final paper. <p>
 Student: Thiago Henrique Ferreira <p>
 Advisor: Tácito Trindade de Araújo Tiburtino Neves <p>
 
-# Installation
---------------
+### Installation
 Dependencies
 
 The installation of mppy requires:
@@ -27,7 +26,7 @@ This project can be installed using [pip](https://pypi.python.org/pypi/pip)
 $ pip install mppy
 ```
 
-# Example
+### Example
 Here is an example of using the Force Scheme technique in the Iris dataset:
 ```python3
 >>> import numpy as np, mppy
@@ -38,14 +37,14 @@ Here is an example of using the Force Scheme technique in the Iris dataset:
 ```
 ![projection](https://github.com/thiagohenriquef/mppy/blob/master/projection.png)
 
-# Source code
+### Source code
 
 You can check the latest sources with the command:
 ```sh
 git clone https://github.com/thiagohenriquef/mppy.git
 ```
 
-# Techniques: <p>
+### Techniques
 Force Scheme -> OK <p>
 LAMP -> OK <p>
 LSP -> OK <p>
@@ -53,5 +52,5 @@ Pekalska -> OK <p>
 PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
 Sammon -> OK <p>
 
-# Contact
+### Contact
 * "Thiago H. Ferreira" <thiagohferreira10@gmail.com>
