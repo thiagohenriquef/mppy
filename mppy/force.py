@@ -1,6 +1,6 @@
 def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
     """
-    Force Scheme
+    Force Scheme Projection
 
     Computes Multidimensional Projection using Force-Scheme algorithm. Note that
     the projection will always be 2D in this code.
