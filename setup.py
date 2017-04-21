@@ -10,5 +10,5 @@ setup(
     download_url = 'https://github.com/thiagohenriquef/mppy/archive/0.3.tar.gz', # I'll explain this in a second
     keywords = ['multidimensional projection', 'data visualization', 'dimensionality reduction'], # arbitrary keywords
     classifiers=['Development Status :: 4 - Beta','Programming Language :: Python :: 3'],
-    install_requires = ['numpy>=1.11.0', 'scipy>=0.17.0', 'matplotlib>=1.5.1', 'scikit-learn>=0.17'],
+    install_requires = ['numpy>=1.11.0', 'matplotlib>=1.5.1', 'scikit-learn>=0.17'],
 )
