@@ -1,6 +1,5 @@
 language: python
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
 # command to install dependencies
@@ -11,4 +10,4 @@ install:
   - "pip install -r requirements.txt"
   - "pip install pytest"
 # command to run tests
-script: pytest
+#script: py.test
