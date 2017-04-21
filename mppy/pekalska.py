@@ -2,6 +2,21 @@
 import mppy.sammon as sammon
 
 def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
+    """
+    Pekalska Sammon Approach
+    :param matrix: ndarray(m,n)
+        dataset in the original multidimensional space. Must be a ndarray.
+    :param sample_indices: ndarray(x,), optional, x < m.
+        The X indices used as the projection sample. If sample.indices is None, a random sample is generated.
+    :param sample_proj: ndarray(x,2), optional, x<m.
+        Projection of the initial sample. If sample.indices is None, this attribute is omitted.
+    :return: ndarray(m,2)
+        The 2D representation of the data.
+
+    See also:
+        Pekalska, Elzbieta, et al. "A new method of generalizing Sammon mapping
+        with application to algorithm speed-up." ASCI. Vol. 99. 1999.
+    """
     import numpy as np
     import scipy as sp
     from scipy.spatial.distance import pdist, squareform

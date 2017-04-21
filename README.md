@@ -27,7 +27,7 @@ $ pip install mppy
 ```
 
 ### Example
-Here is an example of using the Force Scheme technique in the Iris dataset:
+Here is an example of using the Force Scheme technique in the [Iris dataset](https://github.com/thiagohenriquef/mppy/blob/master/datasets/iris.data):
 ```python3
 >>> import numpy as np, mppy
 >>> data = np.loadtxt("datasets/iris.data", delimiter=",")

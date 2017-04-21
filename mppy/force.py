@@ -1,17 +1,28 @@
 def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
     """
     Force Scheme Projection
-
     Computes Multidimensional Projection using Force-Scheme algorithm. Note that
     the projection will always be 2D in this code.
 
-    :param X: dataset in the original multidimensional space. Must be a ndarray.
-    :param Y: Initial 2D configuration, if None, randomly chooses the initial configuration.
-    :param max_iter: Maximum number of iterations that the algorithm will execute.
-    :param delta_frac: fraction to control the points movement
-    :param eps: Minimum distance between two points.
-    :return: The bidimensional representation of the data
+    :param X: ndarray(m,n)
+        dataset in the original multidimensional space. Must be a ndarray.
+    :param Y: ndarray(m,2)
+        Initial 2D configuration, if None, randomly chooses the initial configuration.
+    :param max_iter: int, optional, default:50
+        Maximum number of iterations that the algorithm will execute.
+    :param delta_frac:  float, optional, default=8.0
+        fraction to control the points movement. Larger values means less freedom to move.
+    :param eps: float, optional, default value is 0.000001
+        Minimum distance between two points.
+    :return: ndarray(m,2)
+        The bidimensional representation of the data.
+
+    See also:
+        Tejada, Eduardo, Rosane Minghim, and Luis Gustavo Nonato.
+        "On improved projection techniques to support visual exploration of multi-dimensional data sets."
+        Information Visualization 2.4 (2003): 218-231.
     """
+
     import time
     data_matrix = X.copy()
 

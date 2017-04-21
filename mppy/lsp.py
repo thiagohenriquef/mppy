@@ -4,12 +4,20 @@ import mppy.sammon as sammon
 def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     """
     Least Square Projection
-    :param matrix: a high-dimensional matrix dataset
-    :param sample_indices: Samples indices used as control points
-    :param sample_proj: data samples of original dataset
-    :param neighbors: number of neighbors
-    :param dim: final dimension of the projection
+    :param matrix: ndarray(m,n)
+        dataset in the original multidimensional space. Must be a ndarray.
+    :param sample_indices: ndarray(x,), optional, x < m.
+        The X indices used as the projection sample. If sample.indices is None, a random sample is generated.
+    :param sample_proj: ndarray(x,2), optional, x<m.
+        Projection of the initial sample. If sample.indices is None, this attribute is omitted.
+    :param neighbors: int, optional, neighbors=15
+        number of neighbors used at the neighborhood matrix
     :return:
+
+    See also:
+        Paulovich, Fernando V., et al. "Least square projection: A fast high-precision
+        multidimensional projection technique and its application to document mapping."
+        IEEE Transactions on Visualization and Computer Graphics 14.3 (2008): 564-575.
     """
 
     import numpy as np
@@ -63,6 +71,5 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     matrix_2d = np.dot(X,Y)
 
     print("Algorithm execution: %.2f seconds" % (time.time() - start_time))
-    #print("Stress: %s" % kruskal_stress(data_matrix, matrix_2d))
 
     return matrix_2d

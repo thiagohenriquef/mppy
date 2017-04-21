@@ -3,12 +3,19 @@ import mppy.sammon as sammon
 
 def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
     """
-    Local Affine Multidimensional Projection
-    :param matrix:
-    :param sample_indices:
-    :param sample_proj:
-    :param proportion:
-    :return:
+    Local affine multidimensional projection
+    :param matrix: ndarray(m,n)
+        dataset in the original multidimensional space. Must be a ndarray.
+    :param sample_indices: ndarray(x,), optional, x < m.
+        The X indices used as the projection sample. If sample.indices is None, a random sample is generated.
+    :param sample_proj: ndarray(x,2), optional, x<m.
+        Projection of the initial sample. If sample.indices is None, this attribute is omitted.
+    :param proportion: Proportion of nearest control points to be used.
+    :return: A 2D representation of the data.
+
+    See also:
+        Joia, Paulo, et al. "Local affine multidimensional projection."
+        IEEE Transactions on Visualization and Computer Graphics 17.12 (2011): 2563-2571.
     """
     import numpy as np
     import time

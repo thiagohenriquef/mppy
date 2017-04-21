@@ -1,19 +1,19 @@
 def kruskal_stress(distance_rn, distance_r2):
     """
-
-    :param distance_rn:
-    :param distance_r2:
-    :return:
+    Kruskal Stress to measure the goodness of fit.
+    :param distance_rn: ndarray(m,n)
+        The original multidimensional dataset.
+    :param distance_r2: ndarray(m,2)
+        The lower dimension of the original dataset
+    :return result: float
+        The goodness of fit.
     """
-
     from scipy.spatial.distance import pdist, squareform
-
     """
     distance_r2 = squareform(pdist(distance_r2))
     distance_rn = squareform(pdist(distance_rn))
     num = np.sum(np.power(distance_r2 - distance_rn, 2))
     den = np.sum(np.power(distance_rn, 2))
-
     """
     distance_rn = squareform(pdist(distance_rn), 'euclidean')
     distance_r2 = squareform(pdist(distance_r2), 'euclidean')
@@ -28,16 +28,19 @@ def kruskal_stress(distance_rn, distance_r2):
             num += (dist_rn - dist_r2) * (dist_rn - dist_r2)
             den += dist_rn * dist_rn
 
-    return num / den
+    result = num / den
+    return result
 
 def normalized_kruskal_stress(distance_rn, distance_r2):
     """
-
-    :param distance_rn:
-    :param distance_r2:
-    :return:
+    Normalized Kruskal Stress to measure the goodness of fit.
+    :param distance_rn: ndarray(m,n)
+        The original multidimensional dataset.
+    :param distance_r2: ndarray(m,2)
+        The lower dimension of the original dataset
+    :return result: float
+        The goodness of fit, a value between 0 and 1.
     """
-
     from scipy.spatial.distance import pdist, squareform
     import math
     distance_rn = squareform(pdist(distance_rn), 'euclidean')
@@ -67,4 +70,5 @@ def normalized_kruskal_stress(distance_rn, distance_r2):
             num += (dist_rn - dist_r2) * (dist_rn - dist_r2)
             den += dist_rn * dist_rn
 
-    return num / den
+    result = num / den
+    return result
