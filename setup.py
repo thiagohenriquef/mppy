@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
     name = 'mppy',
     packages = ['mppy'], # this must be the same as the name above
-    version = '0.3.1',
+    version = '0.3.3',
     description = 'Multidimensional Projection in Python',
     long_description= 'The mppy is a multidimensional projection library that generates 2D representations of high dimensional data sets.',
     author = 'Thiago Henrique Ferreira',
