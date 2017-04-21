@@ -38,9 +38,16 @@ Here is an example of using the Force Scheme technique in the Iris dataset:
 >>> matrix_2d = mppy.force_2d(data[:,0:3])
 >>> mppy.simple_scatter_plot(matrix_2d,clusters)
 ```
-![projection](thiagohenriquef.github.com/mppy/projection.png)
+![projection](https://github.com/thiagohenriquef/mppy/blob/master/projection.png)
 
-Techniques: <p>
+# Source code
+
+You can check the latest sources with the command:
+```sh
+git clone https://github.com/thiagohenriquef/mppy.git
+```
+
+# Techniques: <p>
 Force Scheme -> OK <p>
 LAMP -> OK <p>
 LSP -> OK <p>
@@ -48,3 +55,5 @@ Pekalska -> OK <p>
 PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
 Sammon -> OK <p>
 
+# Contact
+* "Thiago H. Ferreira" <thiagohferreira10@gmail.com>
