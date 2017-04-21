@@ -1,27 +1,24 @@
-import numpy as np
-from scipy.spatial.distance import pdist, squareform, euclidean
-from mppy.stress import calculate_kruskal_stress
-from sklearn import manifold
-import time
-
-
 def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
+    from mppy.stress import kruskal_stress
+    import time
+
     orig_matrix = matrix
-    # data_matrix = matrix[:, :-1]
     data_matrix = orig_matrix.copy()
-    distance_matrix = squareform(pdist(data_matrix))
 
     start_time = time.time()
     matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol, dim)
     print("Algorithm execution: %s seconds" % (time.time() - start_time))
-    print("Stress: %s" % calculate_kruskal_stress(data_matrix, matrix_2d))
+    print("Stress: %s" % kruskal_stress(data_matrix, matrix_2d))
 
     return matrix_2d
 
 
 def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
-    # data_matrix = data_matrix[:, :-1]
-    distance_matrix = squareform(pdist(data_matrix))
+    import numpy as np
+    from scipy.spatial.distance import pdist, squareform
+    from sklearn import manifold
+
+    distance_matrix = squareform(pdist(data_matrix), 'euclidean')
 
     if initial_projection is None:
         mds = manifold.MDS(n_components=dim, dissimilarity="euclidean")
@@ -39,7 +36,6 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
                 sum_dist_rn += distance_matrix[a,b]
 
         c = -2 / sum_dist_rn
-        #print(c)
 
         for p in range(distance_matrix.shape[0]):
             for q in range(dim):

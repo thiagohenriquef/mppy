@@ -1,15 +1,11 @@
-import numpy as np
-import scipy as sp
-from sklearn.preprocessing import scale
-import mppy.force as force
 import mppy.sammon as sammon
-from mppy.stress import calculate_kruskal_stress
-import time
+from mppy.stress import kruskal_stress
 
+def  plmp_2d(matrix, sample_indices=None, sample_data=None, dim=2):
+    import numpy as np
+    import time
 
-def plmp_2d(matrix, sample_indices=None, sample_data=None, dim=2):
     orig_matrix = matrix
-    # data_matrix = matrix[:, :-1]
     data_matrix = orig_matrix.copy()
     instances = orig_matrix.shape[0]
     dimensions = orig_matrix.shape[1]
@@ -38,6 +34,6 @@ def plmp_2d(matrix, sample_indices=None, sample_data=None, dim=2):
         project[j, :] = np.dot(data_matrix[j, :], initial_matrix)
 
     print("Algorithm execution: %s seconds" % (time.time() - start_time))
-    print("Stress: %s" % calculate_kruskal_stress(data_matrix, project))
+    print("Stress: %s" % kruskal_stress(data_matrix, project))
 
     return project
