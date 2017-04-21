@@ -45,12 +45,12 @@ git clone https://github.com/thiagohenriquef/mppy.git
 ```
 
 ### Techniques
-Force Scheme -> OK <p>
-LAMP -> OK <p>
-LSP -> OK <p>
-Pekalska -> OK <p>
-PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
-Sammon -> OK <p>
+* Force Scheme -> OK <p>
+* LAMP -> OK <p>
+* LSP -> OK <p>
+* Pekalska -> OK <p>
+* PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
+* Sammon -> OK <p>
 
 ### Contact
 * "Thiago H. Ferreira" <thiagohferreira10@gmail.com>
