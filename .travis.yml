@@ -6,8 +6,8 @@ python:
   - "3.5"
   - "3.6"
 # command to install dependencies
-#install:
+install: "pip install -e ."
 #  - "pip install -r requirements.txt"
 #  - "pip install pytest"
 # command to run tests
-script: py.test -v --color=yes --exitfirst --showlocals --durations=5
+script: tox
