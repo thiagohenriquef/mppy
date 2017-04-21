@@ -11,3 +11,6 @@ install:
   - "pip install pytest"
 # command to run tests
 script: py.test -v --color=yes --exitfirst --showlocals --durations=5
+
+after_success:
+  - python time.py
