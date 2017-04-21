@@ -9,5 +9,6 @@ install:
   - "pip install scipy"
   - "pip install -r requirements.txt"
   - "pip install pytest"
+  - "pip install pytest-cov"
 # command to run tests
-script: py.test --cov mppy
+script: py.test mppy/tests/test_unit.py
