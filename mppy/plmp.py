@@ -1,5 +1,4 @@
 import mppy.sammon as sammon
-from mppy.stress import kruskal_stress
 
 def  plmp_2d(matrix, sample_indices=None, sample_data=None, dim=2):
     import numpy as np
@@ -34,6 +33,5 @@ def  plmp_2d(matrix, sample_indices=None, sample_data=None, dim=2):
         project[j, :] = np.dot(data_matrix[j, :], initial_matrix)
 
     print("Algorithm execution: %s seconds" % (time.time() - start_time))
-    print("Stress: %s" % kruskal_stress(data_matrix, project))
 
     return project

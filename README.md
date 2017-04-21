@@ -38,7 +38,7 @@ Here is an example of using the Force Scheme technique in the Iris dataset:
 >>> matrix_2d = mppy.force_2d(data[:,0:3])
 >>> mppy.simple_scatter_plot(matrix_2d,clusters)
 ```
-![My image](username.github.com/repository/img/image.jpg)
+![projection](thiagohenriquef.github.com/mppy/projection.png)
 
 Techniques: <p>
 Force Scheme -> OK <p>

@@ -5,7 +5,6 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
     import numpy as np
     import scipy as sp
     from scipy.spatial.distance import pdist, squareform
-    #from mppy.stress import calculate_kruskal_stress
     import time
 
     orig_matrix = matrix
@@ -49,6 +48,5 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         matrix_2d[i,1] = np.dot(dists, V[1,:])
 
     print("Algorithm execution: %s seconds" % (time.time() - start_time))
-    #print("Stress: %s" % calculate_kruskal_stress(data_matrix, matrix_2d))
 
     return matrix_2d

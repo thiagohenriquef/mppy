@@ -1,14 +1,11 @@
 def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
-    from mppy.stress import kruskal_stress
     import time
 
     orig_matrix = matrix
-    data_matrix = orig_matrix.copy()
 
     start_time = time.time()
     matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol, dim)
     print("Algorithm execution: %s seconds" % (time.time() - start_time))
-    print("Stress: %s" % kruskal_stress(data_matrix, matrix_2d))
 
     return matrix_2d
 
