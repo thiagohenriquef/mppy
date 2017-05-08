@@ -1,18 +1,19 @@
-class MyTest(unittest.TestCase):
-
-    def test(self):
-        import numpy as np
-        import mppy
-        import os
-
-        print(path.abspath(path.join(__file__, "../..")), "/datasets/iris.data")
-        data = np.loadtxt(path.abspath(path.join(__file__, "../..")), "/datasets/iris.data", delimiter=",")
-        result = mppy.force_2d(data)
-
-        print("Stress: ", mppy.normalized_kruskal_stress(data, result))
-
-        mppy.simple_scatter_plot(result, data[:, data.shape[1] - 1])
-
-
-if __name__ == "__main__":
-    unittest.main()
+-import unittest
+ -
+ -def fun(x):
+ -    """
+ -    basic function for test
+ -    :param x: value
+ -    :return: value incremented with 1
+ -    """
+ -    return x + 1
+ -
+ -class MyTest(unittest.TestCase):
+ -    """
+ -    Simple class to unit test
+ -    """
+ -    def test(self):
+ -        self.assertEqual(fun(3), 4)
+ -
+ -if __name__ == '__main__':
+ -    unittest.main()

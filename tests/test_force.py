@@ -3,7 +3,8 @@ if __name__ == "__main__":
     import mppy
     import os
 
-    data = np.loadtxt("/home/thiago/PycharmProjects/mppy/datasets/diabetes.data", delimiter=",")
+    print(path.abspath(path.join(__file__ ,"../..")),"/datasets/diabetes.data")
+    data = np.loadtxt(path.abspath(path.join(__file__ ,"../..")),"/datasets/diabetes.data", delimiter=",")
     result = mppy.force_2d(data)
 
     print("Stress: ",mppy.normalized_kruskal_stress(data, result))
