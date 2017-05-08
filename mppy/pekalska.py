@@ -1,4 +1,4 @@
-#import mppy.force as force
+import mppy.force as force
 import mppy.sammon as sammon
 
 def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
@@ -34,7 +34,7 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
 
     Ds = data_matrix[sample_indices, :]
     if sample_proj is None:
-        #sample_proj = force._force(Ds)
+        # sample_proj = force._force(Ds)
         sample_proj = sammon._sammon(Ds)
 
     # creating base D
@@ -62,6 +62,6 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         matrix_2d[i,0] = np.dot(dists, V[0,:])
         matrix_2d[i,1] = np.dot(dists, V[1,:])
 
-    print("Algorithm execution: %s seconds" % (time.time() - start_time))
+    print("Algorithm execution: %.3f seconds" % (time.time() - start_time))
 
     return matrix_2d

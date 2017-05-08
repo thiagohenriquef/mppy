@@ -28,43 +28,42 @@ def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
 
     start_time = time.time()
     matrix_2d = _force(data_matrix, Y, max_iter, delta_frac, eps)
-    print("Algorithm execution: %.2f seconds" % (time.time() - start_time))
+    print("Algorithm execution: %lf seconds" % (time.time() - start_time))
 
     return matrix_2d
 
 
-def _force(X, Y=None, max_iter=50, delta_frac=80, eps=1e-6):
+def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
     """ Common code for force_2d(), lamp_2d(), lsp_2d(), pekalska_2d() and plmp_2d()."""
     import numpy as np
     from scipy.spatial.distance import pdist, squareform
+    import ctypes
+    from numpy.ctypeslib import ndpointer
+    import os
 
     if Y is None:
         Y = np.random.random((X.shape[0], 2))
 
+    double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
+
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/force.so")
+
+    force_c = c_code.force
+    force_c.argtypes = [double_pointer, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_double]
+    force_c.restype = None
+
     distance_matrix = squareform(pdist(X))
     index = np.random.permutation(X.shape[0])
-    for i in range(max_iter):
-        for i in range(X.shape[0]):
-            instance1 = index[i]
-            for j in range(X.shape[0]):
-                instance2 = index[j]
+    instances = X.shape[0]
 
-                if instance1 == instance2:
-                    continue
-                else:
-                    x1x2 = Y[instance2, 0] - Y[instance1, 0]
-                    y1y2 = Y[instance2, 1] - Y[instance1, 1]
-                    dr2 = np.hypot(x1x2, y1y2)
-                    # dr2 = np.sqrt((x1x2 * x1x2) + (y1y2 * y1y2))
-
-                if dr2 < eps:
-                    dr2 = eps
-
-                drn = distance_matrix[instance1, instance2] - dr2
-                delta = drn - dr2
-                delta /= delta_frac
-
-                Y[instance2, 0] += delta * (x1x2 / dr2)
-                Y[instance2, 1] += delta * (y1y2 / dr2)
+    xpp = (distance_matrix.__array_interface__['data'][0]
+           + np.arange(distance_matrix.shape[0]) * distance_matrix.strides[0]).astype(np.uintp)
+    ypp = (Y.__array_interface__['data'][0]
+           + np.arange(Y.shape[0]) * Y.strides[0]).astype(np.uintp)
+    max_iter_ = ctypes.c_int(max_iter)
+    delta_frac_ = ctypes.c_double(delta_frac)
+    eps_ = ctypes.c_double(eps)
+    instances_ = ctypes.c_int(instances)
+    force_c(xpp,ypp,instances_, max_iter_,eps_, delta_frac_)
 
     return Y

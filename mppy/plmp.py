@@ -1,6 +1,7 @@
 import mppy.sammon as sammon
 
-def  plmp_2d(matrix, sample_indices=None, dim=2):
+
+def plmp_2d(matrix, sample_indices=None, dim=2):
     """
     Part Linear Multidimensional Projection
     :param matrix: ndarray(m,n)
@@ -49,6 +50,6 @@ def  plmp_2d(matrix, sample_indices=None, dim=2):
     for j in range(instances):
         project[j, :] = np.dot(data_matrix[j, :], initial_matrix)
 
-    print("Algorithm execution: %s seconds" % (time.time() - start_time))
+    print("Algorithm execution: %.2f seconds" % (time.time() - start_time))
 
     return project

@@ -1,4 +1,5 @@
 import mppy.sammon as sammon
+#import mppy.force as force
 
 
 def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
@@ -35,6 +36,7 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
         sample_proj = sammon._sammon(aux)
+        # sample_proj = force._force(aux)
 
     d = data_matrix.shape[1]
     k = sample_data.shape[0]
@@ -154,6 +156,6 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
         matrix_2d[p,0] = x
         matrix_2d[p,1] = y
 
-    print("Algorithm execution: %.2f seconds" % (time.time() - start_time))
+    print("Algorithm execution: %.3f seconds" % (time.time() - start_time))
 
     return matrix_2d

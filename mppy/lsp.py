@@ -1,4 +1,5 @@
 import mppy.sammon as sammon
+import mppy.force as force
 
 
 def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
@@ -19,10 +20,9 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         multidimensional projection technique and its application to document mapping."
         IEEE Transactions on Visualization and Computer Graphics 14.3 (2008): 564-575.
     """
-
+    import random
     import numpy as np
     from scipy.spatial.distance import squareform, pdist
-    from sklearn.neighbors import kneighbors_graph
     import time
 
     instances = matrix.shape[0]
@@ -36,6 +36,7 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
         sample_proj = sammon._sammon(aux)
+        # sample_proj = force._force(aux)
 
     # creating matrix A
     nc = sample_indices.shape[0]
@@ -45,8 +46,8 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         neighbors = np.argsort(Dx[i, :])[1:n_neighbors + 1]
         A[i,i] = 1.0
         alphas = Dx[i, neighbors]
-        if any(alphas < 1e-9):
-            alphas[np.array([idx for idx, item in enumerate(alphas) if item < 1e-9])] = 1
+        if any(alphas < 1e-7):
+            alphas[np.array([idx for idx, item in enumerate(alphas) if item < 1e-7])] = 1
             alphas = 0
         else:
             alphas = 1 / alphas
