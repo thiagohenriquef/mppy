@@ -3,12 +3,12 @@
 #include <stdlib.h>
 
 extern void sammon(double **distance_matrix, 
-					double **initial_projection,
-					double **projection_aux,
-					int instances, 
-					int max_iter,
-					double magic_factor,
-					double tol){
+	double **initial_projection,
+	double **projection_aux,
+	int instances, 
+	int max_iter,
+	double magic_factor,
+	double tol){
 	int i, count;
 	double delta_pq = 0.0;
 	double c = 0.0;
@@ -30,7 +30,7 @@ extern void sammon(double **distance_matrix,
     printf("%lf\n", magic_factor);
     printf("%lf\n", tol);
     */
-    
+
 	for (i=0; i<max_iter; i++){	
 		sum_dist_rn = 0.0;	
 		
@@ -52,26 +52,27 @@ extern void sammon(double **distance_matrix,
 				sum_inder_1 = 0.0;
 				sum_inder_2 = 0.0;
 
-                for(j=0; j<instances; j++){
+				for(j=0; j<instances; j++){
 					if(j != p){
-					    x1x2 = projection_aux[p][0] - projection_aux[j][0];
-                        y1y2 = projection_aux[p][1] - projection_aux[j][1];
-                        dist_pj = sqrt(abs(x1x2 * x1x2 + y1y2 * y1y2));
-                        
-                        if(dist_pj < tol){
-                        	dist_pj = tol;
-                        }
-                        
-                        double d = ((distance_matrix[p][j] - dist_pj) / (distance_matrix[p][j] * dist_pj));
-                        double e = projection_aux[p][q] - projection_aux[j][q];
-                        sum_inder_1 += d * e;
+						x1x2 = projection_aux[p][0] - projection_aux[j][0];
+						y1y2 = projection_aux[p][1] - projection_aux[j][1];
+						dist_pj = sqrt(abs(x1x2 * x1x2 + y1y2 * y1y2));
+
+						if(dist_pj < tol){
+							dist_pj = tol;
+						}
+
+						double d = ((distance_matrix[p][j] - dist_pj) / (distance_matrix[p][j] * dist_pj));
+						double e = projection_aux[p][q] - projection_aux[j][q];
+						sum_inder_1 += d * e;
 						
-                        double f = (1 / (distance_matrix[p][j] * dist_pj));
-                        double g = ((distance_matrix[p][j] - dist_pj) - ((pow((projection_aux[p][q] - projection_aux[j][q]),2) / dist_pj) * (1 + ((distance_matrix[p][j] - dist_pj) / dist_pj))));
-                        sum_inder_2 += f * g;
-                        
+						double f = (1 / (distance_matrix[p][j] * dist_pj));
+						double g = ((distance_matrix[p][j] - dist_pj) - ((pow((projection_aux[p][q] - projection_aux[j][q]),2) / dist_pj) * (1 + ((distance_matrix[p][j] - dist_pj) / dist_pj))));
+						sum_inder_2 += f * g;
+
 					}
 				}
+				
 				delta_pq = ((c * sum_inder_1) / abs(c * sum_inder_2));
 				initial_projection[p][q] -= magic_factor * delta_pq;
 			}
