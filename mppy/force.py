@@ -45,7 +45,6 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
         Y = np.random.random((X.shape[0], 2))
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-
     c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/force.so")
 
     force_c = c_code.force

@@ -67,8 +67,8 @@ def normalized_kruskal_stress(distance_rn, distance_r2):
             dist_rn = distance_rn[i, j] / max_rn
             dist_r2 = distance_r2[i, j] / max_r2
 
-            num += (dist_rn - dist_r2) * (dist_rn - dist_r2)
-            den += dist_rn * dist_rn
+            num = num + (dist_rn - dist_r2) * (dist_rn - dist_r2)
+            den = den + dist_rn * dist_rn
 
     result = num / den
     return result
