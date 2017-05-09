@@ -6,7 +6,7 @@ if __name__ == "__main__":
 
 
     data = np.loadtxt(dirname(os.getcwd())+"/datasets/iris.data", delimiter=",")
-    result = mppy.sammon(data[:, 0:data.shape[1]-1])
+    result = mppy.lamp_2d(data[:, 0:data.shape[1]-1])
 
     print("Stress: ",mppy.normalized_kruskal_stress(data[:, 0:data.shape[1]-1], result))
 

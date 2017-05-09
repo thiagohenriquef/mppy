@@ -63,16 +63,16 @@ extern void sammon(double **distance_matrix,
 						}
 
 						double d = ((distance_matrix[p][j] - dist_pj) / (distance_matrix[p][j] * dist_pj));
-						double e = projection_aux[p][q] - projection_aux[j][q];
+						double e = initial_projection[p][q] - initial_projection[j][q];
 						sum_inder_1 += d * e;
 						
 						double f = (1 / (distance_matrix[p][j] * dist_pj));
-						double g = ((distance_matrix[p][j] - dist_pj) - ((pow((projection_aux[p][q] - projection_aux[j][q]),2) / dist_pj) * (1 + ((distance_matrix[p][j] - dist_pj) / dist_pj))));
+						double g = ((distance_matrix[p][j] - dist_pj) - ((pow((initial_projection[p][q] - initial_projection[j][q]),2) / dist_pj) * (1 + ((distance_matrix[p][j] - dist_pj) / dist_pj))));
 						sum_inder_2 += f * g;
 
 					}
 				}
-				
+
 				delta_pq = ((c * sum_inder_1) / abs(c * sum_inder_2));
 				initial_projection[p][q] -= magic_factor * delta_pq;
 			}

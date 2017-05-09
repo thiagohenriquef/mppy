@@ -88,7 +88,6 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
                                             (1 + ((distance_matrix[p, j] - dist_pj) / dist_pj))))
 
                 delta_pq = ((c * sum_inder_1) / abs(c * sum_inder_2))
-                print(delta_pq)
                 initial_projection[p, q] -= magic_factor * delta_pq
     """
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
