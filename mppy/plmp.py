@@ -2,7 +2,7 @@ import mppy.sammon as sammon
 import mppy.force as force
 
 
-def plmp_2d(matrix, sample_indices=None, dim=2):
+def plmp_2d(matrix, sample_indices=None):
     """
     Part Linear Multidimensional Projection
     :param matrix: ndarray(m,n)
@@ -10,9 +10,7 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
     :param sample_indices: ndarray(x,), optional
         The indices of the representative instances used as control points. If
         sample_indices is None, a random selection will be generated.
-    :param dim: int, optional, default is 2
-        The final target dimensionality.
-    :return: ndarray(m,dim)
+    :return: ndarray(m,2)
         The final 2D projection
 
     See also:
@@ -35,7 +33,6 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
     if sample_indices is None:
         sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
 
-    # Xs = data_matrix[sample_indices, :]
     aux = data_matrix[sample_indices, :]
     sample_data = force._force(aux)
 
@@ -55,6 +52,7 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
     aux_Ax = transf[:,0]
     aux_Ay = transf[:,1]
 
+    # calculating the projection P = D.A
     for i in range(instances):
         row = data_matrix[i, :]
         x = np.dot(row, aux_Ax)

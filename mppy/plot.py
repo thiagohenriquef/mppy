@@ -51,3 +51,12 @@ def interactive_scatter_plot(matrix_2d, matrix, clusters=None):
         fig.canvas.mpl_connect('pick_event', onpick3)
 
     mplpy.show()
+
+def delaunay_scatter(matrix_2d, data, clusters):
+    from scipy.spatial import Delaunay
+    import matplotlib.pyplot as plt
+    tri = Delaunay(matrix_2d)
+    plt.triplot(matrix_2d[:, 0], matrix_2d[:, 1], tri.simplices.copy())
+    plt.scatter(matrix_2d[:, 0], matrix_2d[:, 1],
+                  c=clusters.astype(int), marker='o', alpha=1, edgecolors='black')
+    plt.show()

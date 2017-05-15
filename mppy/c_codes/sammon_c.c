@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-
+/*
 extern void sammon(double **distance_matrix, 
 	double **initial_projection,
 	double **projection_aux,
@@ -9,7 +9,74 @@ extern void sammon(double **distance_matrix,
 	int max_iter,
 	double magic_factor,
 	double tol){
-	int i, count;
+
+	for(int count = 0; count<max_iter; count++){
+		int nrPoints = instances;
+		float sumDistRn = 0;
+		float sumInDer1 = 0;
+		float sumInDer2 = 0;
+		float delta_pq = 0;
+		float c = 0;
+		float dist_pj = 0.0;
+		float y1y2, x1x2;
+
+		//necessary to calculate the gradient
+		for (int i = 0; i < instances; i++) {
+			projection_aux[i][0] = initial_projection[i][0];
+			projection_aux[i][1] = initial_projection[i][1];
+		}
+
+    //computing the initial error
+		for (int i = 0; i < nrPoints - 1; i++) {
+			for (int j = i + 1; j < nrPoints; j++) {
+				if (distance_matrix[i][j] < tol) {
+					distance_matrix[i][j];
+				}
+                sumDistRn += distance_matrix[i][j]; // I need of this for calculating the error
+            }
+        }
+
+        c = (-2 / sumDistRn);
+
+        for (int p = 0; p < nrPoints; p++) {
+        	for (int q = 0; q < 2; q++) {
+        		sumInDer1 = 0;
+        		sumInDer2 = 0;
+
+        		for (int j = 0; j < nrPoints; j++) {
+        			if (j != p) {
+        				x1x2 = projection_aux[p][0] - projection_aux[j][0];
+        				y1y2 = projection_aux[p][1] - projection_aux[j][1];
+        				dist_pj = sqrt(abs(x1x2 * x1x2 + y1y2 * y1y2));
+
+        				sumInDer1 += ((distance_matrix[p][j] - dist_pj) /
+        					(distance_matrix[p][j] * dist_pj)) *
+        				(initial_projection[p][q] - initial_projection[j][q]);
+
+        				sumInDer2 += (1 / (distance_matrix[p][j] * dist_pj)) *
+        				((distance_matrix[p][j] - dist_pj) -
+        					(((pow((initial_projection[p][q] - initial_projection[j][q]), 2) / dist_pj)) *
+        						(1 + ((distance_matrix[p][j] - dist_pj) / dist_pj))));
+        			}
+        		}
+
+        		delta_pq = ((c * sumInDer1) / (abs(c * sumInDer2)));
+                initial_projection[p][q] -= (magic_factor * delta_pq);  // Ypq(m+1)
+            }
+        }
+    }
+
+}
+
+*/
+extern void sammon(double **distance_matrix, 
+	double **initial_projection,
+	double **projection_aux,
+	int instances, 
+	int max_iter,
+	double magic_factor,
+	double tol){
+	int count;
 	double delta_pq = 0.0;
 	double c = 0.0;
 	double sum_dist_rn = 0.0;
@@ -31,7 +98,18 @@ extern void sammon(double **distance_matrix,
     printf("%lf\n", tol);
     
 
-	for (i=0; i<max_iter; i++){	
+	for (int i =0; i<max_iter; i++){
+		int count;
+	double delta_pq = 0.0;
+	double c = 0.0;
+	double sum_dist_rn = 0.0;
+	double sum_dist_r2 = 0.0;
+	double sum_inder_1 = 0.0;
+	double sum_inder_2 = 0.0;	
+	int p, q, j;
+	double x1x2, y1y2, dist_pj;
+	int a, b;
+	
 		sum_dist_rn = 0.0;	
 		
 		for(a=0; a<instances; a++){
@@ -79,6 +157,7 @@ extern void sammon(double **distance_matrix,
 				initial_projection[p][q] -= magic_factor * delta_pq;
 			}
 		}
+	printf("%lf\n", initial_projection[2][1]);
 	}
 	/*
 	int count1, count2;

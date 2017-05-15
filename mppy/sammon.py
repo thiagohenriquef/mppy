@@ -1,3 +1,5 @@
+import mppy.force as force
+
 def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
     """
     Sammon Mapping.
@@ -42,8 +44,9 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     distance_matrix = squareform(pdist(data_matrix), 'euclidean')
 
     if initial_projection is None:
-        mds = manifold.MDS(n_components=dim, dissimilarity="euclidean")
-        initial_projection = mds.fit_transform(data_matrix)
+        #mds = manifold.MDS(n_components=dim, dissimilarity="euclidean")
+        #initial_projection = mds.fit_transform(data_matrix)
+        initial_projection = force._force(data_matrix)
 
     projection_aux = initial_projection.copy()
     instances = distance_matrix.shape[0]
