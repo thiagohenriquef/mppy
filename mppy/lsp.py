@@ -35,9 +35,9 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
 
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
-        sample_proj = sammon._sammon(aux)
-        # sample_proj = force._force(aux)
-
+        #sample_proj = sammon._sammon(aux)
+        sample_proj = force._force(aux)
+    print("Projeção inicial executada")
     # creating matrix A
     nc = sample_indices.shape[0]
     A = np.zeros((instances+nc, instances))
@@ -71,6 +71,6 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     Y = np.dot(np.transpose(A), b)
     matrix_2d = np.dot(X,Y)
 
-    print("Algorithm execution: %.2f seconds" % (time.time() - start_time))
+    print("Algorithm execution: %f seconds" % (time.time() - start_time))
 
     return matrix_2d

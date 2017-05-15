@@ -4,10 +4,10 @@ if __name__ == "__main__":
     from os.path import dirname, abspath
     import os
 
-    data = np.loadtxt(dirname(os.getcwd()) + "/datasets/iris.data", delimiter=",")
-    result = mppy.force_2d(data[:,0:3])
+    data = np.loadtxt(dirname(os.getcwd()) + "/datasets/wdbc.data", delimiter=",")
+    result = mppy.force_2d(data)
 
-    mppy.normalized_kruskal_stress(data[:,0:3], result)
+    mppy.normalized_kruskal_stress(data, result)
 
     mppy.simple_scatter_plot(result, data[:, data.shape[1]-1])
     #mppy.interactive_scatter_plot(result, data, data[:, data.shape[1] - 1])

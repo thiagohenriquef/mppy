@@ -9,6 +9,7 @@ def kruskal_stress(distance_rn, distance_r2):
         The goodness of fit.
     """
     from scipy.spatial.distance import pdist, squareform
+    import numpy as np
     """
     distance_r2 = squareform(pdist(distance_r2))
     distance_rn = squareform(pdist(distance_rn))
@@ -28,7 +29,7 @@ def kruskal_stress(distance_rn, distance_r2):
             num += (dist_rn - dist_r2) * (dist_rn - dist_r2)
             den += dist_rn * dist_rn
 
-    result = num / den
+    result = np.sqrt(num / den)
     return result
 
 def normalized_kruskal_stress(distance_rn, distance_r2):

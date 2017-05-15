@@ -21,7 +21,7 @@ extern void sammon(double **distance_matrix,
 	int a, b;
 
 
-	/*
+	
     printf("%lf\n", distance_matrix[1][0]);
     printf("%lf\n",initial_projection[1][1]);
     printf("%lf\n",projection_aux[1][1]);
@@ -29,7 +29,7 @@ extern void sammon(double **distance_matrix,
     printf("%d\n", max_iter);
     printf("%lf\n", magic_factor);
     printf("%lf\n", tol);
-    */
+    
 
 	for (i=0; i<max_iter; i++){	
 		sum_dist_rn = 0.0;	
@@ -44,7 +44,9 @@ extern void sammon(double **distance_matrix,
 			}
 		}
 
-		c = -2 / sum_dist_rn;
+		c = -2.0 / sum_dist_rn;
+		printf("sum_dist_rn -> %lf\n", sum_dist_rn);
+		printf("c -> %lf\n", -2.0 / sum_dist_rn);
 
 		for(p=0; p<instances; p++){
 			

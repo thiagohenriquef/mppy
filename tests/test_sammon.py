@@ -5,9 +5,7 @@ if __name__ == "__main__":
     import os
 
 
-    data = np.loadtxt(dirname(os.getcwd())+"/datasets/iris.data", delimiter=",")
-    #print(data.dtype)
-    #print(data[4,0])
+    data = np.loadtxt(dirname(os.getcwd())+"/datasets/wdbc.data", delimiter=",")
     result = mppy.sammon(data[:, 0:data.shape[1]-1])
 
     mppy.normalized_kruskal_stress(data[:, 0:data.shape[1]-1], result)

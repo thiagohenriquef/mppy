@@ -54,3 +54,5 @@ git clone https://github.com/thiagohenriquef/mppy.git
 
 ### Contact
 * "Thiago H. Ferreira" <thiagohferreira10@gmail.com>
+
+<span class="pln">os</span><span class="pun">.</span><span class="pln">system</span><span class="pun">(</span><span class="str" style="color: #800000;">"taskset -p 0xffffffff %d"</span><span class="pun">%</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">getpid</span><span class="pun">())</span>

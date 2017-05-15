@@ -1,4 +1,4 @@
-def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
+def force_2d(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     """
     Force Scheme Projection
     Computes Multidimensional Projection using Force-Scheme algorithm. Note that
@@ -33,13 +33,15 @@ def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
     return matrix_2d
 
 
-def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
+def _force(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     """ Common code for force_2d(), lamp_2d(), lsp_2d(), pekalska_2d() and plmp_2d()."""
     import numpy as np
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
+    #import time
+    #start_time = time.time()
 
     if Y is None:
         Y = np.random.random((X.shape[0], 2))
@@ -65,4 +67,5 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
     instances_ = ctypes.c_int(instances)
     force_c(xpp,ypp,instances_, max_iter_,eps_, delta_frac_)
 
+    #print("Algorithm execution: %lf seconds" % (time.time() - start_time))
     return Y

@@ -1,4 +1,5 @@
 import mppy.sammon as sammon
+import mppy.force as force
 
 
 def plmp_2d(matrix, sample_indices=None, dim=2):
@@ -21,35 +22,46 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
     """
     import numpy as np
     import time
+    import scipy as sp
+    from scipy.spatial.distance import squareform, pdist
 
     orig_matrix = matrix
     data_matrix = orig_matrix.copy()
     instances = orig_matrix.shape[0]
     dimensions = orig_matrix.shape[1]
-    initial_matrix = np.random.random((dimensions, dim))
+    initial_matrix = np.zeros((instances,2))
 
     start_time = time.time()
     if sample_indices is None:
         sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
 
-    Xs = data_matrix[sample_indices, :]
-    #if sample_data is None:
+    # Xs = data_matrix[sample_indices, :]
     aux = data_matrix[sample_indices, :]
-    #sample_data = force._force(aux)
-    sample_data = sammon._sammon(aux)
+    sample_data = force._force(aux)
 
-    L = np.transpose(Xs)
-    for i in range(dim):
-        A = np.dot(L, np.transpose(L))
-        B = np.linalg.inv(A)
-        C = np.dot(np.transpose(L), B)
-        D = np.dot(np.transpose(sample_data[:, i]), C)
-        initial_matrix[:, i] = D
+    # creating matrix D'
+    D = data_matrix[sample_indices, :]
 
-    project = np.zeros((instances, dim))
-    for j in range(instances):
-        project[j, :] = np.dot(data_matrix[j, :], initial_matrix)
+    # creating matrix P'
+    P = sample_data.copy()
 
-    print("Algorithm execution: %.2f seconds" % (time.time() - start_time))
+    # solving to find A
+    DtD = np.dot(D.T,D)
+    DtP = np.dot(D.T,P)
 
-    return project
+    ch = sp.linalg.cholesky(DtD, lower=True)
+    transf = sp.linalg.cho_solve((ch, True), DtP)
+    #transf = sp.linalg.solve(DtD, DtP)
+    aux_Ax = transf[:,0]
+    aux_Ay = transf[:,1]
+
+    for i in range(instances):
+        row = data_matrix[i, :]
+        x = np.dot(row, aux_Ax)
+        y = np.dot(row, aux_Ay)
+        initial_matrix[i, 0] = x
+        initial_matrix[i, 1] = y
+
+    print("Algorithm execution: %f seconds" % (time.time() - start_time))
+    return initial_matrix
+    #return project
