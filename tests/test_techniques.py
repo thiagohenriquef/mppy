@@ -10,8 +10,8 @@ if __name__ == "__main__":
     #print("Carregado conjunto de dados")
     result = mppy.force_2d(data[:, 1:data.shape[1] - 1])
 
-    #print(mppy.neighborhood_preservation(data[:, 1:data.shape[1]-1], result, clusters, 5))
-    print(mppy.neighborhood_hit(result, clusters, 5))
+    print(mppy.neighborhood_preservation(data[:, 1:data.shape[1]-1], result, clusters, 15))
+    print(mppy.neighborhood_hit(result, clusters, 15))
     mppy.normalized_kruskal_stress(data[:, 1:data.shape[1] - 1], result)
     # print(mppy.kruskal_stress(data,result))
 
