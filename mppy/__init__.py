@@ -10,3 +10,4 @@ from mppy.plmp import plmp_2d
 from mppy.plot import interactive_scatter_plot, simple_scatter_plot, delaunay_scatter
 from mppy.sammon import sammon
 from mppy.stress import kruskal_stress, normalized_kruskal_stress
+from mppy.neighborhood import neighborhood_preservation, neighborhood_hit

@@ -47,8 +47,8 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
 
     # finding and solving V
     P, L, U = sp.linalg.lu(D)
-    #L = sp.linalg.cholesky(D)
-    result = np.linalg.solve(L, Y)
+    # result = sp.linalg.lu_solve(L,D)
+    result = sp.linalg.solve(L, Y)
     V = np.transpose(result)
 
     # calculating the projection (Y_base = D.base.V)

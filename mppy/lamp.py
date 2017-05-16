@@ -143,8 +143,8 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
         v_10 = V[1,0]
         v_11 = V[1,1]
 
-        x = 0
-        y = 0
+        x = 0.0
+        y = 0.0
         for j in range(d):
             diff = X[j] - p_star[j]
             u_j0 = U[i,0]
