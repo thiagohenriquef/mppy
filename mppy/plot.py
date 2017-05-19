@@ -70,7 +70,7 @@ def interactive_scatter_plot2(matrix_2d, matrix, clusters=None):
     def fmt(x, y):
         a = np.array([x,y])
         d = np.where(matrix_2d == a)[0]
-        c = str(d[0])
+        c = str(d[0]+1)
         b = str(matrix[d,:][0])
         string = "Index: "+c+"-->"+b
         return string

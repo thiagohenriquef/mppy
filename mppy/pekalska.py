@@ -21,6 +21,7 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
     import scipy as sp
     from scipy.spatial.distance import pdist, squareform
     import time
+    from sklearn.preprocessing import normalize
 
     orig_matrix = matrix
     data_matrix = orig_matrix.copy()
@@ -63,5 +64,6 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         matrix_2d[i,1] = np.dot(dists, V[1,:])
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-
+    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
+    #return normalized
     return matrix_2d

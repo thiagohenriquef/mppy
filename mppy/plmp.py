@@ -2,7 +2,7 @@ import mppy.sammon as sammon
 import mppy.force as force
 
 
-def plmp_2d(matrix, sample_indices=None):
+def plmp_2d(matrix, sample_indices=None, dim=2):
     """
     Part Linear Multidimensional Projection
     :param matrix: ndarray(m,n)
@@ -10,7 +10,9 @@ def plmp_2d(matrix, sample_indices=None):
     :param sample_indices: ndarray(x,), optional
         The indices of the representative instances used as control points. If
         sample_indices is None, a random selection will be generated.
-    :return: ndarray(m,2)
+    :param dim: int, optional, default is 2
+        The final target dimensionality.
+    :return: ndarray(m,dim)
         The final 2D projection
 
     See also:
@@ -20,46 +22,38 @@ def plmp_2d(matrix, sample_indices=None):
     """
     import numpy as np
     import time
-    import scipy as sp
-    from scipy.spatial.distance import squareform, pdist
+    from sklearn.preprocessing import scale
 
     orig_matrix = matrix
     data_matrix = orig_matrix.copy()
     instances = orig_matrix.shape[0]
     dimensions = orig_matrix.shape[1]
-    initial_matrix = np.zeros((instances,2))
+    initial_matrix = np.random.random((dimensions, dim))
 
     start_time = time.time()
     if sample_indices is None:
         sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
 
+    Xs = data_matrix[sample_indices, :]
+    #if sample_data is None:
     aux = data_matrix[sample_indices, :]
     sample_data = force._force(aux)
 
-    # creating matrix D'
-    D = data_matrix[sample_indices, :]
 
-    # creating matrix P'
-    P = sample_data.copy()
+    L = np.transpose(Xs)
+    for i in range(dim):
+        A = np.dot(L, np.transpose(L))
+        B = np.linalg.inv(A)
+        C = np.dot(np.transpose(L), B)
+        D = np.dot(np.transpose(sample_data[:, i]), C)
+        initial_matrix[:, i] = D
 
-    # solving to find A
-    DtD = np.dot(D.T,D)
-    DtP = np.dot(D.T,P)
-
-    ch = sp.linalg.cholesky(DtD, lower=True)
-    transf = sp.linalg.cho_solve((ch, True), DtP)
-    #transf = sp.linalg.solve(DtD, DtP)
-    aux_Ax = transf[:,0]
-    aux_Ay = transf[:,1]
-
-    # calculating the projection P = D.A
-    for i in range(instances):
-        row = data_matrix[i, :]
-        x = np.dot(row, aux_Ax)
-        y = np.dot(row, aux_Ay)
-        initial_matrix[i, 0] = x
-        initial_matrix[i, 1] = y
+    matrix_2d = np.zeros((instances, dim))
+    for j in range(instances):
+        matrix_2d[j, :] = np.dot(data_matrix[j, :], initial_matrix)
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-    return initial_matrix
-    #return project
+    return matrix_2d
+    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
+    #return normalized
+    

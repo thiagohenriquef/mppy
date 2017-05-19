@@ -160,5 +160,6 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
         matrix_2d[p,1] = y
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-
+    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
+    #return normalized
     return matrix_2d

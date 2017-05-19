@@ -40,6 +40,7 @@ def _force(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
+    from sklearn.preprocessing import normalize
     #import time
     #start_time = time.time()
 
@@ -68,4 +69,6 @@ def _force(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     force_c(xpp,ypp,instances_, max_iter_,eps_, delta_frac_)
 
     #print("Algorithm execution: %lf seconds" % (time.time() - start_time))
-    return Y
+    normalized = (Y-Y.min())/(Y.max()-Y.min())
+    return normalized
+    #return Y

@@ -46,13 +46,14 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         neighbors = np.argsort(Dx[i, :])[1:n_neighbors + 1]
         A[i,i] = 1.0
         alphas = Dx[i, neighbors]
-        if any(alphas < 1e-7):
-            alphas[np.array([idx for idx, item in enumerate(alphas) if item < 1e-7])] = 1
-            alphas = 0
-        else:
-            alphas = 1 / alphas
-            alphas = alphas / np.sum(alphas)
-            alphas = alphas / np.sum(alphas)
+        #if any(alphas < 1e-7):
+        #    alphas[np.array([idx for idx, item in enumerate(alphas) if item < 1e-7])] = 1
+        #    alphas = 0
+        #else:
+        #    alphas = 1 / np.sum(alphas)
+        #    #alphas = alphas / np.sum(alphas)
+        #    #alphas = alphas / np.sum(alphas)
+        alphas = 1 / np.sum(alphas)
         A[i, neighbors] = -alphas
 
     count = 0
@@ -66,11 +67,14 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         b[j+instances, 0] = sample_proj[j, 0]
         b[j+instances, 1] = sample_proj[j, 1]
 
+    #print(A.shape, b.shape)
     # solving the system Ax=B
-    X = np.linalg.inv(np.dot(A.transpose(),A))
-    Y = np.dot(np.transpose(A), b)
-    matrix_2d = np.dot(X,Y)
+    AtA = np.dot(A.transpose(),A)
+    inv_AtA = np.linalg.inv(AtA)
+    C = np.dot(inv_AtA,np.transpose(A))
+    matrix_2d = np.dot(C, b)
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-
+    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
+    #return normalized
     return matrix_2d
