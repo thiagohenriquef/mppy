@@ -23,6 +23,7 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     import random
     import numpy as np
     from scipy.spatial.distance import squareform, pdist
+    from scipy.linalg import cho_factor, cho_solve, cholesky
     import time
 
     instances = matrix.shape[0]
@@ -37,24 +38,17 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         aux = data_matrix[sample_indices, :]
         #sample_proj = sammon._sammon(aux)
         sample_proj = force._force(aux)
-
+    print(sample_indices)
     # creating matrix A
     nc = sample_indices.shape[0]
     A = np.zeros((instances+nc, instances))
     Dx = squareform(pdist(data_matrix))
+    neighbors = Dx.argsort()[:,1:n_neighbors+1]
+
     for i in range(instances):
-        neighbors = np.argsort(Dx[i, :])[1:n_neighbors + 1]
         A[i,i] = 1.0
-        alphas = Dx[i, neighbors]
-        #if any(alphas < 1e-7):
-        #    alphas[np.array([idx for idx, item in enumerate(alphas) if item < 1e-7])] = 1
-        #    alphas = 0
-        #else:
-        #    alphas = 1 / np.sum(alphas)
-        #    #alphas = alphas / np.sum(alphas)
-        #    #alphas = alphas / np.sum(alphas)
-        alphas = 1 / np.sum(alphas)
-        A[i, neighbors] = -alphas
+        array_neigh = neighbors[i,:]
+        A[i,array_neigh] = (-(1.0 / n_neighbors))
 
     count = 0
     for i in range(instances, A.shape[0]):
@@ -67,12 +61,17 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         b[j+instances, 0] = sample_proj[j, 0]
         b[j+instances, 1] = sample_proj[j, 1]
 
-    #print(A.shape, b.shape)
     # solving the system Ax=B
     AtA = np.dot(A.transpose(),A)
     inv_AtA = np.linalg.inv(AtA)
     C = np.dot(inv_AtA,np.transpose(A))
     matrix_2d = np.dot(C, b)
+    #return matrix_2d
+
+    #L = np.dot(np.transpose(A), A)
+    #S = cholesky(L)
+    #A_ch = cho_factor(S, lower=True)
+    #matrix_2d = cho_solve(A_ch,b)
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
     #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
