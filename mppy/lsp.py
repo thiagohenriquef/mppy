@@ -38,7 +38,8 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         aux = data_matrix[sample_indices, :]
         #sample_proj = sammon._sammon(aux)
         sample_proj = force._force(aux)
-    print(sample_indices)
+    print("Initial projection time: %f" % (time.time() - start_time))
+    
     # creating matrix A
     nc = sample_indices.shape[0]
     A = np.zeros((instances+nc, instances))
@@ -66,7 +67,6 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     inv_AtA = np.linalg.inv(AtA)
     C = np.dot(inv_AtA,np.transpose(A))
     matrix_2d = np.dot(C, b)
-    #return matrix_2d
 
     #L = np.dot(np.transpose(A), A)
     #S = cholesky(L)
@@ -74,6 +74,6 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     #matrix_2d = cho_solve(A_ch,b)
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
-    #return normalized
+    normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
+    return normalized
     return matrix_2d

@@ -37,6 +37,7 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
     if sample_proj is None:
         sample_proj = force._force(Ds)
         # sample_proj = sammon._sammon(Ds)
+    print("Initial projection time: %f" % (time.time() - start_time))
 
     # creating base D
     n_rows, n_cols = sample_proj.shape

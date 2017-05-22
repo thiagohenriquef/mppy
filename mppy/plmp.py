@@ -35,9 +35,9 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
         sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
 
     Xs = data_matrix[sample_indices, :]
-    #if sample_data is None:
     aux = data_matrix[sample_indices, :]
     sample_data = force._force(aux)
+    print("Initial projection time: %f" % (time.time() - start_time))
 
 
     L = np.transpose(Xs)

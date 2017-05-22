@@ -64,11 +64,13 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
 
         # local W
         local_w.fill(math.inf)
+        i = 0
         for i in range(k):
             P = sample_data[i]
             Q = sample_proj[i]
 
             w = 0.0
+            j = 0
             for j in range(d):
                 w = w + (X[j] - P[j]) * (X[j] - P[j])
 
@@ -107,6 +109,7 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
 
             w_sum = w_sum + local_w[i]
 
+        j = 0
         for j in range(d):
             p_star[j] = p_sum[j] / w_sum
 
@@ -145,6 +148,7 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
 
         x = 0.0
         y = 0.0
+        j = 0
         for j in range(d):
             diff = X[j] - p_star[j]
             u_j0 = U[i,0]

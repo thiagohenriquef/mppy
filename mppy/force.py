@@ -40,9 +40,6 @@ def _force(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
-    from sklearn.preprocessing import normalize
-    #import time
-    #start_time = time.time()
 
     if Y is None:
         Y = np.random.random((X.shape[0], 2))
@@ -55,7 +52,6 @@ def _force(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     force_c.restype = None
 
     distance_matrix = squareform(pdist(X))
-    index = np.random.permutation(X.shape[0])
     instances = X.shape[0]
 
     xpp = (distance_matrix.__array_interface__['data'][0]
@@ -68,7 +64,6 @@ def _force(X, Y=None, max_iter=100, delta_frac=8.0, eps=1e-6):
     instances_ = ctypes.c_int(instances)
     force_c(xpp,ypp,instances_, max_iter_,eps_, delta_frac_)
 
-    #print("Algorithm execution: %lf seconds" % (time.time() - start_time))
     normalized = (Y-Y.min())/(Y.max()-Y.min())
     return normalized
     #return Y
