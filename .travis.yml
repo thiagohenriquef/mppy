@@ -11,4 +11,4 @@ install:
   - "pip install pytest"
   - "pip install pytest-cov"
 # command to run tests
-script: py.test mppy/tests/test_unit.py
+script: py.test mppy/tests/test_force.py

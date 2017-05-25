@@ -10,27 +10,29 @@ def kruskal_stress(distance_rn, distance_r2):
     """
     from scipy.spatial.distance import pdist, squareform
     import numpy as np
-    """
-    distance_r2 = squareform(pdist(distance_r2))
-    distance_rn = squareform(pdist(distance_rn))
-    num = np.sum(np.power(distance_r2 - distance_rn, 2))
-    den = np.sum(np.power(distance_rn, 2))
-    """
+    import ctypes
+    from numpy.ctypeslib import ndpointer
+    import os
+    import numpy as np
+
     distance_rn = squareform(pdist(distance_rn), 'euclidean')
     distance_r2 = squareform(pdist(distance_r2), 'euclidean')
 
-    num = 0.0
-    den = 0.0
-    for i in range(distance_rn.shape[0]):
-        for j in range(1, distance_rn.shape[0]):
-            dist_rn = distance_rn[i, j]
-            dist_r2 = distance_r2[i, j]
+    double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/c_codes/kruskal.so")
 
-            num += (dist_rn - dist_r2) * (dist_rn - dist_r2)
-            den += dist_rn * dist_rn
+    kruskal_c = c_code.kruskal_stress
+    kruskal_c.argtypes = [double_pointer, double_pointer, ctypes.c_int]
+    kruskal_c.restype = None
 
-    result = np.sqrt(num / den)
-    return result
+    xpp = (distance_rn.__array_interface__['data'][0]
+           + np.arange(distance_rn.shape[0]) * distance_rn.strides[0]).astype(np.uintp)
+    ypp = (distance_r2.__array_interface__['data'][0]
+           + np.arange(distance_r2.shape[0]) * distance_r2.strides[0]).astype(np.uintp)
+    instances_ = ctypes.c_int(distance_rn.shape[0])
+    kruskal_c(xpp, ypp, instances_)
+
+
 
 def normalized_kruskal_stress(distance_rn, distance_r2):
     """
