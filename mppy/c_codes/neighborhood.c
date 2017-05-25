@@ -2,7 +2,9 @@
 #include<stdlib.h>
 #include<math.h>
 
-extern void neighborhood_hit(double **distance_r2, double *values, double *clusters, int instances, int max_neighbors){
+extern double* neighborhood_hit(double **distance_r2, double *clusters, int instances, int max_neighbors){
+    double *values;
+    values = (double *)malloc(max_neighbors *sizeof(double));
     int n, i;
     int total = 0;
     double c;
@@ -22,4 +24,6 @@ extern void neighborhood_hit(double **distance_r2, double *values, double *clust
         }
         values[n] = percentage / instances;
     } 
+
+    return values;
 }
