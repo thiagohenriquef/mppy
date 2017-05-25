@@ -66,4 +66,3 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
 
     normalized = (Y-Y.min())/(Y.max()-Y.min())
     return normalized
-    #return Y

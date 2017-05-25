@@ -51,6 +51,7 @@ def interactive_scatter_plot(matrix_2d, matrix, clusters=None):
         fig.canvas.mpl_connect('pick_event', onpick3)
 
     mplpy.show()
+    mplpy.close()
 
 def delaunay_scatter(matrix_2d, data, clusters):
     from scipy.spatial import Delaunay
@@ -62,6 +63,7 @@ def delaunay_scatter(matrix_2d, data, clusters):
     plt.scatter(matrix_2d[:, 0], matrix_2d[:, 1],
                   c=clusters.astype(int), marker='o', alpha=1, edgecolors='black')
     plt.show()
+    plt.close()
 
 
 def interactive_scatter_plot2(matrix_2d, matrix, clusters=None):
@@ -151,3 +153,4 @@ def interactive_scatter_plot2(matrix_2d, matrix, clusters=None):
                   c=clusters.astype(int), marker='o', alpha=1, edgecolors='black')
     cursor = FollowDotCursor(ax, matrix_2d[:,0], matrix_2d[:,1])
     plt.show()
+    plt.close()

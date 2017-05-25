@@ -20,8 +20,8 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     """
     import numpy as np
     import time
-    import ctypes
-    from numpy.ctypeslib import ndpointer
+    # import ctypes
+    # from numpy.ctypeslib import ndpointer
     
     instances = data_matrix.shape[0]
     matrix_2d = np.random.random((instances, 2))
@@ -45,9 +45,7 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     Pstar = np.zeros((d))
     Qstar = np.zeros((r))
 
-    local_w = np.zeros((n))
     AtB = np.zeros((d, r))
-    p = 0
 
     for p in range(instances):
         X = data_matrix[p,:]

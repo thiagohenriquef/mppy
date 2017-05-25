@@ -3,10 +3,10 @@ def neighborhood_preservation(data_matrix, data_proj, max_neighbors=50):
     import numpy as np
     
     instances = data_matrix.shape[0]
-    #dist_matrix = squareform(pdist(data_matrix))
-    #dist_proj = squareform(pdist(data_proj))
-    #idx_matrix = dist_matrix.argsort()[:, 1:max_neighbors+1]
-    #idx_proj = dist_proj.argsort()[:, 1:max_neighbors+1]
+    dist_matrix = squareform(pdist(data_matrix))
+    dist_proj = squareform(pdist(data_proj))
+    idx_matrix = dist_matrix.argsort()[:, 1:max_neighbors+1]
+    idx_proj = dist_proj.argsort()[:, 1:max_neighbors+1]
 
     values = np.zeros((max_neighbors))
     

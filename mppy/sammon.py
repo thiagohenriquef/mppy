@@ -36,18 +36,14 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     """Common code for lamp_2d(), lsp_2d(), pekalska_2d(), plmp_2d and sammon()"""
     import numpy as np
     from scipy.spatial.distance import pdist, squareform
-    from sklearn import manifold
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
 
-    distance_matrix = squareform(pdist(data_matrix), 'euclidean')
-
     if initial_projection is None:
-        #mds = manifold.MDS(n_components=dim, dissimilarity="euclidean")
-        #initial_projection = mds.fit_transform(data_matrix)
         initial_projection = force._force(data_matrix)
-    
+
+    distance_matrix = squareform(pdist(data_matrix), 'euclidean')
     projection_aux = initial_projection.copy()
     instances = distance_matrix.shape[0]
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
@@ -68,7 +64,5 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     magic_factor_ = ctypes.c_double(magic_factor)
     instances_ = ctypes.c_int(instances)
     sammon_c(xpp, ypp, auxpp, instances_, max_iter_, magic_factor_, tol_)
-
-    normalized = (initial_projection - initial_projection.min()) / (initial_projection.max() - initial_projection.min())
-    return normalized
     return initial_projection
+
