@@ -31,7 +31,8 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
 
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.randint(0, instances-1, int(1.0 * np.sqrt(instances)))
+        #sample_indices = np.random.randint(0, instances-1, int(1.0 * np.sqrt(instances)))
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
         sample_proj = None
 
     if sample_proj is None:
@@ -59,8 +60,9 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     # creating matrix B
     b = np.zeros((instances+nc, 2))
     for j in range(sample_proj.shape[0]):
-        b[j+instances, 0] = sample_proj[j, 0]
-        b[j+instances, 1] = sample_proj[j, 1]
+        #b[j+instances, 0] = sample_proj[j, 0]
+        #b[j+instances, 1] = sample_proj[j, 1]
+        b[j+instances] = sample_proj[j]
 
     # solving the system Ax=B
     AtA = np.dot(A.transpose(),A)
@@ -68,12 +70,7 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     C = np.dot(inv_AtA,np.transpose(A))
     matrix_2d = np.dot(C, b)
 
-    #L = np.dot(np.transpose(A), A)
-    #S = cholesky(L)
-    #A_ch = cho_factor(S, lower=True)
-    #matrix_2d = cho_solve(A_ch,b)
-
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-    normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
-    return normalized
+    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
+    #return normalized
     return matrix_2d

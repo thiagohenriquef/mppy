@@ -31,7 +31,8 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
     start_time = time.time()
     # creating the sample distance matrix
     if sample_indices is None:
-        sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
+        #sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
 
     Ds = data_matrix[sample_indices, :]
     if sample_proj is None:
@@ -49,7 +50,7 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
 
     # finding and solving V
     P, L, U = sp.linalg.lu(D)
-    # result = sp.linalg.lu_solve(L,D)
+    #result = sp.linalg.lu_solve(L,D)
     result = sp.linalg.solve(L, Y)
     V = np.transpose(result)
 
@@ -65,6 +66,4 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         matrix_2d[i,1] = np.dot(dists, V[1,:])
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
-    #return normalized
     return matrix_2d

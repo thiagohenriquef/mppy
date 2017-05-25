@@ -2,7 +2,7 @@ import mppy.sammon as sammon
 import mppy.force as force
 
 
-def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
+def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     """
     Local affine multidimensional projection
     :param matrix: ndarray(m,n)
@@ -20,150 +20,146 @@ def lamp_2d(matrix, sample_indices=None, sample_proj=None, proportion=1):
     """
     import numpy as np
     import time
-    import math
-    from sklearn import manifold
-
-    orig_matrix = matrix
-    data_matrix = orig_matrix.copy()
-    instances = orig_matrix.shape[0]
+    import ctypes
+    from numpy.ctypeslib import ndpointer
+    
+    instances = data_matrix.shape[0]
     matrix_2d = np.random.random((instances, 2))
-
+    
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
+        sample_indices = np.random.choice(instances, int(1.0 * np.sqrt(instances)), replace=False)
         sample_proj = None
 
     sample_data = data_matrix[sample_indices, :]
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
-        #sample_proj = sammon._sammon(aux)
         sample_proj = force._force(aux)
-        #mds = manifold.MDS(n_components=2, dissimilarity="euclidean")
-        #sample_proj = mds.fit_transform(aux)
+    print("Initial projection: %f seconds" % (time.time() - start_time))
 
     d = data_matrix.shape[1]
     k = sample_data.shape[0]
     r = sample_proj.shape[1]
     n = int(max(int(k * proportion), 1))
 
-    p_star = np.zeros((d))
-    q_star = np.zeros((r))
+    Pstar = np.zeros((d))
+    Qstar = np.zeros((r))
 
     local_w = np.zeros((n))
     AtB = np.zeros((d, r))
-    neighbors_index = np.zeros((n))
+    p = 0
 
-    for p in range(data_matrix.shape[0]):
-        X = data_matrix[p, :]
-
-        # Step 1: obtaining p_star and q_star
-        p_sum = np.zeros((d))
-        q_sum = np.zeros((r))
-        w_sum = 0.0
+    for p in range(instances):
+        X = data_matrix[p,:]
+        W = np.zeros((k))
+        Wsqrt = np.zeros((k))
+        Psum = np.zeros((d))
+        Qsum = np.zeros((r))
+        Wsum = 0
         jump = False
 
-        # local W
-        local_w.fill(math.inf)
-        i = 0
-        for i in range(k):
-            P = sample_data[i]
-            Q = sample_proj[i]
+        for i in range(0,k):
+            P = sample_data[i,:]
+            Q = sample_proj[i,:]
 
-            w = 0.0
-            j = 0
-            for j in range(d):
-                w = w + (X[j] - P[j]) * (X[j] - P[j])
+            W[i] = 0
+            for j in range(0,d):
+                W[i] += (X[j] - P[j]) * (X[j] - P[j])
 
-            # coincident points
-            if w < 1e-6:
-                matrix_2d[p] = Q
+            if W[i] < 1e-6:
+                matrix_2d[p,0] = Q[0]
+                matrix_2d[p,1] = Q[1]
                 jump = True
                 break
 
-            if w < local_w[n-1]:
-                for j in range(n):
-                    if local_w[j] > w:
-                        for m in range(n-1, j, -1):
-                            local_w[m] = local_w[m - 1]
-                            neighbors_index[m] = neighbors_index[m - 1]
+            W[i] = 1 / W[i]
 
-                        local_w[j] = w
-                        neighbors_index[j] = i
-                        break
+            for j in range(0,d):
+                Psum[j] = Psum[j] + P[j] * W[i]
+
+            Qsum[0] = Qsum[0] + Q[0] * W[i]
+            Qsum[1] = Qsum[1] + Q[1] * W[i]
+
+            Wsum = Wsum + W[i]
+            Wsqrt[i] = np.sqrt(W[i])
 
         if jump is True:
             continue
 
-        i = 0
-        for i in range(n):
-            P = sample_data[int(neighbors_index[i])]
-            Q = sample_proj[int(neighbors_index[i])]
+        for j in range(0,d):
+            Pstar[j] = Psum[j] / Wsum
 
-            local_w[i] = 1.0 / local_w[i]
+        Qstar[0] = Qsum[0] / Wsum
+        Qstar[1] = Qsum[1] / Wsum
 
-            for j in range(d):
-                p_sum[j] = p_sum[j] + P[j] * local_w[i]
 
-            q_sum[0] = q_sum[0] + Q[0] * local_w[i]
-            q_sum[1] = q_sum[1] + Q[1] * local_w[i]
-
-            w_sum = w_sum + local_w[i]
-
-        j = 0
-        for j in range(d):
-            p_star[j] = p_sum[j] / w_sum
-
-        q_star[0] = q_sum[0] / w_sum
-        q_star[1] = q_sum[1] / w_sum
-
-        # Step 2: obtain phat, qhat, A and B
-        # calculating AtB
-        i = 0
-        j = 0
-        for i in range(d):
+        #STEP 2
+        for i in range(0,d):
             x = 0.0
             y = 0.0
 
-            for j in range(n):
-                P = sample_data[int(neighbors_index[j])]
-                Q = sample_proj[int(neighbors_index[j])]
+            for j in range(0,k):
+                P = sample_data[j,:]
+                Q = sample_proj[j,:]
 
-                w_sqrt = np.sqrt(abs(local_w[j]))
+                aij = (P[i] - Pstar[i]) * Wsqrt[j]
+                x = x + (aij * ((Q[0] - Qstar[0]) * Wsqrt[j]))
+                y = y + (aij * ((Q[1] - Qstar[1]) * Wsqrt[j]))
 
-                a_ij = (P[i] - p_star[i]) * w_sqrt
+            AtB[i,0] = x
+            AtB[i,1] = y
 
-                x = x + (a_ij * ((Q[0] - q_star[0]) * w_sqrt))
-                y = y + (a_ij * ((Q[1] - q_star[1]) * w_sqrt))
-
-            AtB[i, 0] = x
-            AtB[i, 1] = y
-
-        # Step 3: projection
-        # SVD computation
+        #STEP 3
         U, s, V = np.linalg.svd(AtB)
-        v_00 = V[0,0]
-        v_01 = V[0,1]
-        v_10 = V[1,0]
-        v_11 = V[1,1]
 
-        x = 0.0
-        y = 0.0
-        j = 0
-        for j in range(d):
-            diff = X[j] - p_star[j]
-            u_j0 = U[i,0]
-            u_j1 = U[i,1]
+        x = 0
+        y = 0
+        for j in range(0,d):
+            diff = X[j] - Pstar[j]
 
-            x += diff * (u_j0 * v_00 * u_j1 * v_01)
-            y += diff * (u_j0 * v_10 * u_j1 * v_11)
+            x += diff * (U[j,0] * V[0,0] + U[j,1] * V[0,1])
+            y += diff * (U[j,0] * V[1,0] + U[j,1] * V[1,1])
 
-        x = x + q_star[0]
-        y = y + q_star[1]
+        x = x + Qstar[0]
+        y = y + Qstar[1]
 
         matrix_2d[p,0] = x
         matrix_2d[p,1] = y
 
+
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
-    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
-    #return normalized
     return matrix_2d
+
+    """
+    double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/lamp.so")
+
+    lamp_c = c_code.lamp
+    lamp_c.argtypes = [double_pointer, double_pointer, double_pointer, double_pointer, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
+    lamp_c.restype = None
+    
+    data_matrixpp = (data_matrix.__array_interface__['data'][0]
+           + np.arange(data_matrix.shape[0]) * data_matrix.strides[0]).astype(np.uintp)
+
+    matrix_2dpp = (matrix_2d.__array_interface__['data'][0]
+           + np.arange(matrix_2d.shape[0]) * matrix_2d.strides[0]).astype(np.uintp)
+
+    AtBpp = (AtB.__array_interface__['data'][0]
+           + np.arange(AtB.shape[0]) * AtB.strides[0]).astype(np.uintp)
+
+    sample_datapp = (AtB.__array_interface__['data'][0]
+           + np.arange(sample_data.shape[0]) * sample_data.strides[0]).astype(np.uintp)
+
+    sample_projpp = (sample_proj.__array_interface__['data'][0]
+           + np.arange(sample_proj.shape[0]) * sample_proj.strides[0]).astype(np.uintp)
+
+    instances_ = ctypes.c_int(instances)
+    d_ = ctypes.c_int(d)
+    k_ = ctypes.c_int(k)
+    r_ = ctypes.c_int(r)
+    n_ = ctypes.c_int(n)
+
+    lamp_c(data_matrixpp, matrix_2dpp, AtBpp, sample_datapp, sample_projpp, instances_, d_, k_, r_, n_)
+
+    """
+    

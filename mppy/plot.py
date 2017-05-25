@@ -56,6 +56,8 @@ def delaunay_scatter(matrix_2d, data, clusters):
     from scipy.spatial import Delaunay
     import matplotlib.pyplot as plt
     tri = Delaunay(matrix_2d)
+    import scipy 
+    scipy.spatial.delaunay_plot_2d(tri)
     plt.triplot(matrix_2d[:, 0], matrix_2d[:, 1], tri.simplices.copy())
     plt.scatter(matrix_2d[:, 0], matrix_2d[:, 1],
                   c=clusters.astype(int), marker='o', alpha=1, edgecolors='black')

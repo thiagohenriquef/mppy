@@ -40,6 +40,9 @@ extern void normalized_kruskal(double **distance_rn,double **distance_r2, int in
 
     for(x=0;x<instances;x++){
         for(y=0;y<instances;y++){
+            if (x==y){
+                continue;
+            }
             value_rn = distance_rn[x][y];
             value_r2 = distance_r2[x][y];
 
@@ -58,11 +61,14 @@ extern void normalized_kruskal(double **distance_rn,double **distance_r2, int in
 
     for(x=0;x<instances;x++){
         for(y=0;y<instances;y++){
+            if(x==y){
+                continue;
+            }
             dist_rn = distance_rn[x][y] / max_rn;
             dist_r2 = distance_r2[x][y] / max_r2;
 
-            num = num + (dist_rn - dist_r2) * (dist_rn - dist_r2);
-            den = den + dist_rn * dist_rn;
+            num = num + ((dist_rn - dist_r2) * (dist_rn - dist_r2));
+            den = den + (dist_rn * dist_rn);
         }
     }
 
