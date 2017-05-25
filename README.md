@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/thiagohenriquef/mppy.svg?branch=master)](https://travis-ci.org/thiagohenriquef/mppy) [![PyPI version](https://badge.fury.io/py/mppy.svg)](https://badge.fury.io/py/mppy)  [![GitHub version](https://badge.fury.io/gh/thiagohenriquef%2Fmppy.png)](https://badge.fury.io/gh/thiagohenriquef%2Fmppy)[![PyPI](https://img.shields.io/pypi/dd/Django.svg)](https://pypi.python.org/pypi/mppy/) [![Python](https://img.shields.io/badge/python-3.5-blue.svg)]
+[![Build Status](https://travis-ci.org/thiagohenriquef/mppy.svg?branch=master)](https://travis-ci.org/thiagohenriquef/mppy) [![PyPI version](https://badge.fury.io/py/mppy.svg)](https://badge.fury.io/py/mppy)  [![GitHub version](https://badge.fury.io/gh/thiagohenriquef%2Fmppy.png)](https://badge.fury.io/gh/thiagohenriquef%2Fmppy)[![PyPI](https://img.shields.io/pypi/dd/Django.svg)](https://pypi.python.org/pypi/mppy/) [![Python](https://img.shields.io/badge/python-3.5-blue.svg)](https://badge.fury.io/py/mppy)
 
 mppy 
 ======
