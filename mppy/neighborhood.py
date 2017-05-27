@@ -1,4 +1,4 @@
-def neighborhood_preservation(data_matrix, data_proj, max_neighbors=50):
+def neighborhood_preservation(data_matrix, data_proj, max_neighbors=30):
     from scipy.spatial.distance import squareform, pdist
     import numpy as np
     
@@ -71,10 +71,10 @@ def neighborhood_hit(data_proj, clusters, max_neighbors=30):
     plt.xlabel('Neighbors')
     plt.ylabel('Percentage')
     ax = plt.subplot(111)
-    ax.set_xlim(0,1)
+    #ax.set_xlim(0,1)
     dim = np.arange(0, values.shape[0], 1)
     plt.plot(values, linestyle='--', marker='^', color='b')
-    plt.ylim(ymin=0, ymax=1)
+    #plt.ylim(ymin=0, ymax=1)
     plt.xticks(dim)
     plt.grid()
     plt.show()

@@ -14,9 +14,12 @@ def simple_scatter_plot(matrix_2d, clusters=None):
 
     if clusters is None:
         clusters = np.zeros((matrix_2d.shape[0]))
+
+    mplpy.style.use('classic')
     mplpy.scatter(matrix_2d[:, 0], matrix_2d[:, 1],
-                  c=clusters.astype(int), marker='o', alpha=1, edgecolors='black')
+                  c=clusters.astype(int), s=40, marker='o', alpha=1, edgecolors='black')
     mplpy.show()
+    mplpy.close()
 
 
 def interactive_scatter_plot(matrix_2d, matrix, clusters=None):
@@ -70,6 +73,7 @@ def interactive_scatter_plot2(matrix_2d, matrix, clusters=None):
     import matplotlib.pyplot as plt
     import numpy as np
     import scipy.spatial as spatial
+    plt.style.use('classic')
 
     def fmt(x, y):
         a = np.array([x,y])
@@ -149,7 +153,7 @@ def interactive_scatter_plot2(matrix_2d, matrix, clusters=None):
 
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
-    ax.scatter(matrix_2d[:, 0], matrix_2d[:, 1],
+    ax.scatter(matrix_2d[:, 0], matrix_2d[:, 1], s=60,
                   c=clusters.astype(int), marker='o', alpha=1, edgecolors='black')
     cursor = FollowDotCursor(ax, matrix_2d[:,0], matrix_2d[:,1])
     plt.show()

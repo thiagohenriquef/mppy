@@ -31,7 +31,7 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
 
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.choice(instances, int(1.0 * np.sqrt(instances)), replace=False)
+        sample_indices = np.random.choice(instances, int(0.1 * (instances)), replace=False)
         sample_proj = None
 
     if sample_proj is None:
@@ -64,11 +64,8 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         b[j+instances] = sample_proj[j]
 
     # solving the system Ax=B
-    AtA = np.dot(A.transpose(),A)
-    inv_AtA = np.linalg.inv(AtA)
-    C = np.dot(inv_AtA,np.transpose(A))
-    matrix_2d = np.dot(C, b)
-
+    x, residuals, rank, s = np.linalg.lstsq(A,b)
+    matrix_2d = x
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
     #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
     #return normalized

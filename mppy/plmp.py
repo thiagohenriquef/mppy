@@ -31,7 +31,7 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
 
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.choice(instances, int(1.0 * np.sqrt(instances)), replace=False)
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
 
     Xs = data_matrix[sample_indices, :]
     sample_data = force._force(Xs)
