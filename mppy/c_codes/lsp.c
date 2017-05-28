@@ -2,26 +2,26 @@
 #include <stdlib.h>
 #include <math.h>
 
-extern void lsp(int **Dx, double **A, double **b, double **matrix_2d, int *sample_indices, double **sample_proj, int nc, int n_neighbors, int instances){
+extern void lsp(double **neighbors, double **A, double **b, int *sample_indices, double **sample_proj, int nc, int n_neighbors, int instances, float weight){
 	int i = 0;
 	int j = 0;
 
 	for(i=0; i<instances; i++){
-		A[i][i] = 0.0;
-		for(int j=0; j<instances; j++){
-			A[i][Dx[i][j]] = (-(1.0 / n_neighbors));
+		A[i][i] = 1.0;
+		
+		for(int j=0; j<n_neighbors; j++){
+			int value = neighbors[i][j];
+			A[i][value] = (-(1.0 / n_neighbors));
 		}
 	}
 
-	int count = 0;
-	for (i = instances; i < nc; i++){
-		A[i][sample_indices[count]] = 1.0;
-		count++;
+	for (i =0; i < nc; i++){
+		A[i+instances][sample_indices[i]] = 1.0;
 	}
 
-	for (j=instances; j<nc; j++){
-		b[j+instances][0] = sample_proj[j][0];
-		b[j+instances][1] = sample_proj[j][1];
+	for (j=0; j<nc; j++){
+		b[j+instances][0] = sample_proj[j][0] * weight;
+		b[j+instances][1] = sample_proj[j][1] * weight;
 	}
 
 

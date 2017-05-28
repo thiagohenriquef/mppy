@@ -2,7 +2,7 @@ import mppy.sammon as sammon
 import mppy.force as force
 
 
-def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
+def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, weight = 1.0):
     """
     Least Square Projection
     :param matrix: ndarray(m,n)
@@ -20,18 +20,18 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         multidimensional projection technique and its application to document mapping."
         IEEE Transactions on Visualization and Computer Graphics 14.3 (2008): 564-575.
     """
-    import random
     import numpy as np
     from scipy.spatial.distance import squareform, pdist
-    from scipy.linalg import cho_factor, cho_solve, cholesky
     import time
-
-    instances = matrix.shape[0]
-    data_matrix = matrix.copy()
-
+    import ctypes
+    from numpy.ctypeslib import ndpointer
+    import os
+    
+    instances = data_matrix.shape[0]
+    
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.choice(instances, int(0.1 * (instances)), replace=False)
+        sample_indices = np.random.choice(instances, int(3.0 * (np.sqrt(instances))), replace=False)
         sample_proj = None
 
     if sample_proj is None:
@@ -45,7 +45,38 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     A = np.zeros((instances+nc, instances))
     Dx = squareform(pdist(data_matrix))
     neighbors = Dx.argsort()[:,1:n_neighbors+1]
+    neighbors = neighbors.astype(np.float64)
+    sample_indices = sample_indices.astype(np.int32)
+    b = np.zeros((instances+nc, 2))
+    b = b.astype(np.float64)
 
+    double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/lsp.so")
+
+    lsp_c = c_code.lsp
+    lsp_c.argtypes = [double_pointer, double_pointer, double_pointer, ctypes.c_void_p, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_float]
+    lsp_c.restype = None
+
+    neighbors_pp = (neighbors.__array_interface__['data'][0]
+           + np.arange(neighbors.shape[0]) * neighbors.strides[0]).astype(np.uintp)
+    App = (A.__array_interface__['data'][0]
+           + np.arange(A.shape[0]) * A.strides[0]).astype(np.uintp)
+    bpp = (b.__array_interface__['data'][0]
+           + np.arange(b.shape[0]) * b.strides[0]).astype(np.uintp)
+    #matrix_2dpp = (matrix_2d.__array_interface__['data'][0]
+    #       + np.arange(matrix_2d.shape[0]) * matrix_2d.strides[0]).astype(np.uintp)
+    sample_indices_p = sample_indices.ctypes.data_as(ctypes.c_void_p)
+    sample_projdpp = (sample_proj.__array_interface__['data'][0]
+           + np.arange(sample_proj.shape[0]) * sample_proj.strides[0]).astype(np.uintp)
+    nc_ = ctypes.c_int(nc)
+    n_neighbors_ = ctypes.c_int(n_neighbors)
+    instances_ = ctypes.c_int(instances)
+    weight_ = ctypes.c_float(weight)
+
+    lsp_c(neighbors_pp, App, bpp, sample_indices_p, sample_projdpp, nc_, n_neighbors, instances_, weight_)
+    
+    x, residuals, rank, s = np.linalg.lstsq(A,b)
+    """
     for i in range(instances):
         A[i,i] = 1.0
         array_neigh = neighbors[i,:]
@@ -56,8 +87,6 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
         A[i, sample_indices[count]] = 1.0
         count = count + 1
 
-    # creating matrix B
-    b = np.zeros((instances+nc, 2))
     for j in range(sample_proj.shape[0]):
         #b[j+instances, 0] = sample_proj[j, 0]
         #b[j+instances, 1] = sample_proj[j, 1]
@@ -65,8 +94,9 @@ def lsp_2d(matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
 
     # solving the system Ax=B
     x, residuals, rank, s = np.linalg.lstsq(A,b)
-    matrix_2d = x
+    #matrix_2d = x
+    """
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
     #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
     #return normalized
-    return matrix_2d
+    return x

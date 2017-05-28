@@ -40,6 +40,7 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         # sample_proj = sammon._sammon(Ds)
     print("Initial projection time: %f" % (time.time() - start_time))
 
+    
     # creating base D
     n_rows, n_cols = sample_proj.shape
     D = np.zeros((n_rows, n_rows))
@@ -62,8 +63,18 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         for j in range(len(dists)):
             dists[j] = np.linalg.norm(row - Ds[j,:])
 
-        matrix_2d[i,0] = np.dot(dists, V[0,:])
-        matrix_2d[i,1] = np.dot(dists, V[1,:])
+        #matrix_2d[i,0] = np.dot(dists, V[0,:])
+        #matrix_2d[i,1] = np.dot(dists, V[1,:])
+        matrix_2d[i] = np.dot(dists, V[i])
+    """
+    from sklearn.preprocessing import scale
+    Ys = scale(Ys, with_std=False)
+    P = np.linalg.solve(squareform(pdist(matrix[sample_indices,sample_indices])))
+
+    Y[sample_indices,:] = Ys
+    for i in range(m)
+    Y[not in sample_indices, :] <- np.dot(D[not in sample_indices, sample.indices], P)
+    """
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
     return matrix_2d
