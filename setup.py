@@ -1,4 +1,9 @@
 from distutils.core import setup
+import sys
+
+if sys.version_info[:2] < (3,5):
+    print("requires python 3.5 and up")
+
 setup(
     name = 'mppy',
     packages = ['mppy'], # this must be the same as the name above

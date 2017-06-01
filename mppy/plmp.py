@@ -52,8 +52,5 @@ def plmp_2d(matrix, sample_indices=None, dim=2):
         matrix_2d[j, :] = np.dot(data_matrix[j, :], initial_matrix)
         
 
-    print("Algorithm execution: %f seconds" % (time.time() - start_time))
+    print("PLMP: %f seconds" % (time.time() - start_time))
     return matrix_2d
-    #normalized = (matrix_2d-matrix_2d.min())/(matrix_2d.max()-matrix_2d.min())
-    #return normalized
-    

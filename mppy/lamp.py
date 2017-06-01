@@ -28,7 +28,8 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.choice(instances, int(1.0 * np.sqrt(instances)), replace=False)
+        #sample_indices = np.random.randint(0, instances - 1, int(3.0 * np.sqrt(instances)))
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
         sample_proj = None
 
     sample_data = data_matrix[sample_indices, :]
@@ -42,17 +43,17 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     r = sample_proj.shape[1]
     n = int(max(int(k * proportion), 1))
 
-    Pstar = np.zeros((d))
-    Qstar = np.zeros((r))
-
-    AtB = np.zeros((d, r))
+    
 
     for p in range(instances):
         X = data_matrix[p,:]
-        W = np.zeros((k))
+        AtB = np.zeros((d, r))
+        Pstar = np.zeros((d))
+        Qstar = np.zeros((r))
         Wsqrt = np.zeros((k))
         Psum = np.zeros((d))
         Qsum = np.zeros((r))
+        W = np.zeros((k))
         Wsum = 0
         jump = False
 
@@ -125,7 +126,7 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
         matrix_2d[p,1] = y
 
 
-    print("Algorithm execution: %f seconds" % (time.time() - start_time))
+    print("LAMP: %f seconds" % (time.time() - start_time))
     return matrix_2d
 
     """

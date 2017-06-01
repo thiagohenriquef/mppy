@@ -46,7 +46,7 @@ def neighborhood_hit(data_proj, clusters, max_neighbors=30):
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
-    
+
     instances = data_proj.shape[0]
     dist_proj = squareform(pdist(data_proj))
     neighbors = dist_proj.argsort()[:,1:max_neighbors+1]

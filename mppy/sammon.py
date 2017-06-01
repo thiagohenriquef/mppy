@@ -27,18 +27,18 @@ def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1
     import time
     start_time = time.time()
     matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol, dim)
-    print("Algorithm execution: %s seconds" % (time.time() - start_time))
+    print("Sammon's mapping: %f seconds" % (time.time() - start_time))
 
     return matrix_2d
 
 
 def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
     """Common code for lamp_2d(), lsp_2d(), pekalska_2d(), plmp_2d and sammon()"""
-    import numpy as np
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
+    import numpy as np
 
     if initial_projection is None:
         initial_projection = force._force(data_matrix)
@@ -64,5 +64,6 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     magic_factor_ = ctypes.c_double(magic_factor)
     instances_ = ctypes.c_int(instances)
     sammon_c(xpp, ypp, auxpp, instances_, max_iter_, magic_factor_, tol_)
+
     return initial_projection
 

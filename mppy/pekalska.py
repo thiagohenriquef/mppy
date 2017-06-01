@@ -1,7 +1,7 @@
 import mppy.force as force
-import mppy.sammon as sammon
+#import mppy.sammon as sammon
 
-def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
+def pekalska_2d(data_matrix, sample_indices=None, sample_proj=None):
     """
     Pekalska Sammon Approach
     :param matrix: ndarray(m,n)
@@ -21,11 +21,8 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
     import scipy as sp
     from scipy.spatial.distance import pdist, squareform
     import time
-    from sklearn.preprocessing import normalize
 
-    orig_matrix = matrix
-    data_matrix = orig_matrix.copy()
-    instances = orig_matrix.shape[0]
+    instances, dimensions = data_matrix.shape
     matrix_2d = np.random.random((instances, 2))
 
     start_time = time.time()
@@ -40,10 +37,9 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         # sample_proj = sammon._sammon(Ds)
     print("Initial projection time: %f" % (time.time() - start_time))
 
-    
     # creating base D
     n_rows, n_cols = sample_proj.shape
-    D = np.zeros((n_rows, n_rows))
+    #D = np.zeros((n_rows, n_rows))
     D = squareform(pdist(Ds), 'euclidean')
 
     # creating base Y
@@ -51,7 +47,6 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
 
     # finding and solving V
     P, L, U = sp.linalg.lu(D)
-    #result = sp.linalg.lu_solve(L,D)
     result = sp.linalg.solve(L, Y)
     V = np.transpose(result)
 
@@ -63,18 +58,8 @@ def pekalska_2d(matrix, sample_indices=None, sample_proj=None):
         for j in range(len(dists)):
             dists[j] = np.linalg.norm(row - Ds[j,:])
 
-        #matrix_2d[i,0] = np.dot(dists, V[0,:])
-        #matrix_2d[i,1] = np.dot(dists, V[1,:])
-        matrix_2d[i] = np.dot(dists, V[i])
-    """
-    from sklearn.preprocessing import scale
-    Ys = scale(Ys, with_std=False)
-    P = np.linalg.solve(squareform(pdist(matrix[sample_indices,sample_indices])))
+        matrix_2d[i,0] = np.dot(dists, V[0,:])
+        matrix_2d[i,1] = np.dot(dists, V[1,:])
 
-    Y[sample_indices,:] = Ys
-    for i in range(m)
-    Y[not in sample_indices, :] <- np.dot(D[not in sample_indices, sample.indices], P)
-    """
-
-    print("Algorithm execution: %f seconds" % (time.time() - start_time))
+    print("Pekalska Sammon's: %f seconds" % (time.time() - start_time))
     return matrix_2d

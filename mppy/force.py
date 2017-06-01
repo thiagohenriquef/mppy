@@ -1,4 +1,4 @@
-def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
+def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     """
     Force Scheme Projection
     Computes Multidimensional Projection using Force-Scheme algorithm. Note that
@@ -28,18 +28,18 @@ def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
 
     start_time = time.time()
     matrix_2d = _force(data_matrix, Y, max_iter, delta_frac, eps)
-    print("Algorithm execution: %lf seconds" % (time.time() - start_time))
+    print("Force Scheme: %f seconds" % (time.time() - start_time))
 
     return matrix_2d
 
 
-def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
+def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     """ Common code for force_2d(), lamp_2d(), lsp_2d(), pekalska_2d() and plmp_2d()."""
-    import numpy as np
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
+    import numpy as np
 
     if Y is None:
         Y = np.random.random((X.shape[0], 2))
@@ -66,3 +66,41 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-6):
 
     normalized = (Y-Y.min())/(Y.max()-Y.min())
     return normalized
+
+
+def _force_old(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
+    """ Common code for force_2d(), lamp_2d(), lsp_2d(), pekalska_2d() and plmp_2d()."""
+    import numpy as np
+    from scipy.spatial.distance import pdist, squareform
+
+    if Y is None:
+        Y = np.random.random((X.shape[0], 2))
+
+    distance_matrix = squareform(pdist(X))
+    index = np.random.permutation(X.shape[0])
+
+    for i in range(max_iter):
+        for j in range(X.shape[0]):
+            instance1 = index[j]
+            for k in range(X.shape[0]):
+                instance2 = index[k]
+
+                if instance1 == instance2:
+                    continue
+                else:
+                    x1x2 = Y[instance2, 0] - Y[instance1, 0]
+                    y1y2 = Y[instance2, 1] - Y[instance1, 1]
+                    dr2 = np.hypot(x1x2, y1y2)
+                    # dr2 = np.sqrt((x1x2 * x1x2) + (y1y2 * y1y2))
+
+                if dr2 < eps:
+                    dr2 = eps
+
+                drn = distance_matrix[instance1, instance2] - dr2
+                delta = drn - dr2
+                delta /= delta_frac
+
+                Y[instance2, 0] += delta * (x1x2 / dr2)
+                Y[instance2, 1] += delta * (y1y2 / dr2)
+
+    return Y
