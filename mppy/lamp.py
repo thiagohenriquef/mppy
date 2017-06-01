@@ -129,7 +129,31 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     print("LAMP: %f seconds" % (time.time() - start_time))
     return matrix_2d
 
-    """
+def lamp_alpha(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
+    import numpy as np
+    import ctypes, time, os
+    from numpy.ctypeslib import ndpointer
+
+    instances = data_matrix.shape[0]
+    matrix_2d = np.random.random((instances, 2))
+    start_time = time.time()
+    if sample_indices is None:
+        # sample_indices = np.random.randint(0, instances - 1, int(3.0 * np.sqrt(instances)))
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
+        sample_proj = None
+
+    sample_data = data_matrix[sample_indices, :]
+    if sample_proj is None:
+        aux = data_matrix[sample_indices, :]
+        sample_proj = force._force(aux)
+    print("Initial projection: %f seconds" % (time.time() - start_time))
+
+    d = data_matrix.shape[1]
+    k = sample_data.shape[0]
+    r = sample_proj.shape[1]
+    n = int(max(int(k * proportion), 1))
+    AtB = np.zeros((d, r))
+
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
     c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/lamp.so")
 
@@ -160,5 +184,5 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
 
     lamp_c(data_matrixpp, matrix_2dpp, AtBpp, sample_datapp, sample_projpp, instances_, d_, k_, r_, n_)
 
-    """
-    
+    print("LAMP: %f seconds" % (time.time() - start_time))
+    return matrix_2d

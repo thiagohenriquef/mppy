@@ -91,7 +91,6 @@ def _force_old(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
                     x1x2 = Y[instance2, 0] - Y[instance1, 0]
                     y1y2 = Y[instance2, 1] - Y[instance1, 1]
                     dr2 = np.hypot(x1x2, y1y2)
-                    # dr2 = np.sqrt((x1x2 * x1x2) + (y1y2 * y1y2))
 
                 if dr2 < eps:
                     dr2 = eps
