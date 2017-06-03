@@ -20,9 +20,7 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     """
     import numpy as np
     import time
-    # import ctypes
-    # from numpy.ctypeslib import ndpointer
-    
+
     instances = data_matrix.shape[0]
     matrix_2d = np.random.random((instances, 2))
     
@@ -128,6 +126,80 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
 
     print("LAMP: %f seconds" % (time.time() - start_time))
     return matrix_2d
+
+def lamp_beta(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
+    import numpy as np
+    import time
+
+    instances = data_matrix.shape[0]
+    matrix_2d = np.random.random((instances, 2))
+
+    start_time = time.time()
+    if sample_indices is None:
+        # sample_indices = np.random.randint(0, instances - 1, int(3.0 * np.sqrt(instances)))
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
+        sample_proj = None
+
+    sample_data = data_matrix[sample_indices, :]
+    if sample_proj is None:
+        aux = data_matrix[sample_indices, :]
+        sample_proj = force._force(aux)
+    print("Initial projection: %f seconds" % (time.time() - start_time))
+
+    d = data_matrix.shape[1]
+    k = sample_data.shape[0]
+    r = sample_proj.shape[1]
+    n = int(max(int(k * proportion), 1))
+
+    for i in range(instances):
+        row = data_matrix[i]
+
+        skip = False
+        alphas = np.zeros((k))
+
+        for j in range(k):
+            dist = np.sum(np.power((sample_data[j] - row),2))
+            if dist < 1e-4:
+                matrix_2d[i] = sample_proj[j]
+                skip = True
+                break
+
+            alphas[j] = 1.0 / dist
+
+        if skip is True:
+            continue
+
+        c = int(k * proportion)
+        if c < k:
+            index = (-np.array(alphas)).argsort()
+            for j in range(k):
+                alphas[index[j]] = 0.0
+
+        alphas_sum = sum(alphas)
+        alphas_sqrt = np.sqrt(alphas)
+
+        Xtil = np.dot(alphas,sample_data) / alphas_sum
+        Ytil = np.dot(alphas,sample_proj) / alphas_sum
+
+        Xhat = sample_data.copy()
+        Xhat -= Xtil
+        Yhat = sample_proj.copy()
+        Yhat -= Ytil
+
+
+        At = np.transpose(Xhat)
+        At %= alphas_sqrt
+        B = Yhat.copy()
+        B %= np.transpose(alphas_sqrt)
+
+        U,s,V = np.linalg.svd(np.dot(At,B))
+        mat = np.dot(U, np.transpose(V))
+
+        matrix_2d[i] = (row - Xtil) * mat + Ytil
+
+    return matrix_2d
+
+
 
 def lamp_alpha(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     import numpy as np

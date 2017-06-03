@@ -1,6 +1,6 @@
 import mppy.force as force
 
-def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
+def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4):
     """
     Sammon Mapping.
 
@@ -15,8 +15,6 @@ def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1
         0,3 <= magic_factor <= 0,4
     :param tol: float, optional, default value is 0.0001
         Minimum distance between two points.
-    :param dim: int, optional, if None, dim is 2
-        The dimension of the configuration
     :return: ndarray(m, dim)
         The final configuration of the projection
 
@@ -26,21 +24,24 @@ def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1
     """
     import time
     start_time = time.time()
-    matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol, dim)
+    matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol)
     print("Sammon's mapping: %f seconds" % (time.time() - start_time))
 
     return matrix_2d
 
 
-def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
+def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4):
     """Common code for lamp_2d(), lsp_2d(), pekalska_2d(), plmp_2d and sammon()"""
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
     import numpy as np
+    from sklearn.decomposition import PCA
 
     if initial_projection is None:
+        #pca = PCA(n_components=2)
+        #initial_projection = pca.fit_transform(data_matrix)
         initial_projection = force._force(data_matrix)
 
     distance_matrix = squareform(pdist(data_matrix), 'euclidean')

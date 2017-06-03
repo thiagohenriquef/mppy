@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <omp.h>
 
 extern void lsp(double **neighbors, double **A, double **b, int *sample_indices, double **sample_proj, int nc, int n_neighbors, int instances, float weight){
 	int i = 0;

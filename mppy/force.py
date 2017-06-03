@@ -24,10 +24,9 @@ def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     """
 
     import time
-    data_matrix = X.copy()
 
     start_time = time.time()
-    matrix_2d = _force(data_matrix, Y, max_iter, delta_frac, eps)
+    matrix_2d = _force(X, Y, max_iter, delta_frac, eps)
     print("Force Scheme: %f seconds" % (time.time() - start_time))
 
     return matrix_2d

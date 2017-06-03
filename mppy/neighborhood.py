@@ -15,12 +15,12 @@ def neighborhood_preservation(data_matrix, data_proj, max_neighbors=30):
 
         for i in range(instances):
             total = 0.0
-            aux_matrix = idx_matrix[i,:]
+            aux_matrix = idx_matrix[i,:n]
             aux_proj = idx_proj[i,:]
             
             for j in range(n):
                 if aux_proj[j] in aux_matrix:
-                    total = total + 1
+                    total += 1
                 
             percentage += total / (n+1)
 

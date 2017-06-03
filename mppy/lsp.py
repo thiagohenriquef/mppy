@@ -1,4 +1,3 @@
-import mppy.sammon as sammon
 import mppy.force as force
 
 
@@ -76,9 +75,7 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     print("LSP: %f seconds" % (time.time() - start_time))
     return x
 
-
 def _lsp_old(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
-
     import numpy as np
     from scipy.spatial.distance import squareform, pdist
     import time
