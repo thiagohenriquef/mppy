@@ -1,5 +1,3 @@
-import mppy.force as force
-
 def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4):
     """
     Sammon Mapping.
@@ -37,12 +35,13 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     from numpy.ctypeslib import ndpointer
     import os
     import numpy as np
-    from sklearn.decomposition import PCA
+    # from sklearn.decomposition import PCA
+    from mppy.force import _force
 
     if initial_projection is None:
         #pca = PCA(n_components=2)
         #initial_projection = pca.fit_transform(data_matrix)
-        initial_projection = force._force(data_matrix)
+        initial_projection = _force(data_matrix)
 
     distance_matrix = squareform(pdist(data_matrix), 'euclidean')
     projection_aux = initial_projection.copy()

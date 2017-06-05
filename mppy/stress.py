@@ -9,7 +9,6 @@ def kruskal_stress(distance_rn, distance_r2):
         The goodness of fit.
     """
     from scipy.spatial.distance import pdist, squareform
-    import numpy as np
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
@@ -45,7 +44,6 @@ def normalized_kruskal_stress(distance_rn, distance_r2):
         The goodness of fit, a value between 0 and 1.
     """
     from scipy.spatial.distance import pdist, squareform
-    import math
     import ctypes
     from numpy.ctypeslib import ndpointer
     import os
