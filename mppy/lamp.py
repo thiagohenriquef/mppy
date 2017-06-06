@@ -2,7 +2,7 @@ import mppy.sammon as sammon
 import mppy.force as force
 
 
-def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
+def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, tol=1e-4, proportion=1):
     """
     Local affine multidimensional projection
     :param matrix: ndarray(m,n)
@@ -127,78 +127,76 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
     print("LAMP: %f seconds" % (time.time() - start_time))
     return matrix_2d
 
-def lamp_beta(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
+def lamp_beta(x, sample_indices=None, sample_proj=None, tol=1e-4, proportion=1):
     import numpy as np
     import time
 
-    instances = data_matrix.shape[0]
-    matrix_2d = np.random.random((instances, 2))
+    instances, dim = x.shape
+    Y = np.random.random((instances, 2))
 
     start_time = time.time()
     if sample_indices is None:
-        # sample_indices = np.random.randint(0, instances - 1, int(3.0 * np.sqrt(instances)))
-        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
+        sample_indices = np.random.randint(0, instances-1, int(3.0 * np.sqrt(instances-1)))
         sample_proj = None
 
-    sample_data = data_matrix[sample_indices, :]
+    xs = x[sample_indices, :]
     if sample_proj is None:
-        aux = data_matrix[sample_indices, :]
-        sample_proj = force._force(aux)
+        aux = x[sample_indices, :]
+        ys = force._force(aux)
     print("Initial projection: %f seconds" % (time.time() - start_time))
 
-    d = data_matrix.shape[1]
-    k = sample_data.shape[0]
-    r = sample_proj.shape[1]
-    n = int(max(int(k * proportion), 1))
+    k, a = xs.shape
+    ys_dim = ys.shape[1]
 
-    for i in range(instances):
-        row = data_matrix[i]
-
+    for p in range(instances):
+        point = x[p]
+        alphas = np.zeros(k)
         skip = False
-        alphas = np.zeros((k))
 
-        for j in range(k):
-            dist = np.sum(np.power((sample_data[j] - row),2))
-            if dist < 1e-4:
-                matrix_2d[i] = sample_proj[j]
+        for i in range(k):
+            dist = np.sum(np.sqrt(abs(xs[i] - point)))
+            if dist < tol:
+                Y[p] = ys[i]
                 skip = True
                 break
-
-            alphas[j] = 1.0 / dist
+            alphas[i] = 1.0 / dist
 
         if skip is True:
             continue
 
-        c = int(k * proportion)
-        if c < k:
-            index = (-np.array(alphas)).argsort()
-            for j in range(k):
-                alphas[index[j]] = 0.0
 
-        alphas_sum = sum(alphas)
-        alphas_sqrt = np.sqrt(alphas)
+        xtil = np.zeros(dim)
+        # computes x~ and y~ (eq 3)
+        ytil = np.zeros(ys_dim)
+        for i in range(k):
+            xtil += alphas[i] * xs[i]
+            ytil += alphas[i] * ys[i]
+        xtil /= np.sum(alphas)
+        ytil /= np.sum(alphas)
 
-        Xtil = np.dot(alphas,sample_data) / alphas_sum
-        Ytil = np.dot(alphas,sample_proj) / alphas_sum
+        A = np.zeros((k, dim))
+        B = np.zeros((k, ys_dim))
+        xhat = np.zeros((k, dim))
+        yhat = np.zeros((k, ys_dim))
+        # computation of x^ and y^ (eq 6)
+        for i in range(k):
+            xhat[i] = xs[i] - xtil
+            yhat[i] = ys[i] - ytil
+            A[i] = np.sqrt(alphas[i]) * xhat[i]
+            B[i] = np.sqrt(alphas[i]) * yhat[i]
 
-        Xhat = sample_data.copy()
-        Xhat -= Xtil
-        Yhat = sample_proj.copy()
-        Yhat -= Ytil
+        U, D, V = np.linalg.svd(np.dot(A.T, B))  # (eq 7)
+        # VV is the matrix V filled with zeros
+        VV = np.zeros((dim, ys_dim))  # size of U = dim, by SVD
+        for i in range(ys_dim):  # size of V = ys_dim, by SVD
+            VV[i, range(ys_dim)] = V[i]
 
+        M = np.dot(U, VV)  # (eq 7)
 
-        At = np.transpose(Xhat)
-        At %= alphas_sqrt
-        B = Yhat.copy()
-        B %= np.transpose(alphas_sqrt)
+        Y[p] = np.dot(x[p] - xtil, M) + ytil  # (eq 8)
 
-        U,s,V = np.linalg.svd(np.dot(At,B))
-        mat = np.dot(U, np.transpose(V))
-
-        matrix_2d[i] = (row - Xtil) * mat + Ytil
-
-    return matrix_2d
-
+    print("LAMP: %f seconds" % (time.time() - start_time))
+    return Y
 
 
 def lamp_alpha(data_matrix, sample_indices=None, sample_proj=None, proportion=1):
@@ -210,7 +208,6 @@ def lamp_alpha(data_matrix, sample_indices=None, sample_proj=None, proportion=1)
     matrix_2d = np.random.random((instances, 2))
     start_time = time.time()
     if sample_indices is None:
-        # sample_indices = np.random.randint(0, instances - 1, int(3.0 * np.sqrt(instances)))
         sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
         sample_proj = None
 

@@ -29,7 +29,8 @@ def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     matrix_2d = _force(X, Y, max_iter, delta_frac, eps)
     print("Force Scheme: %f seconds" % (time.time() - start_time))
 
-    return matrix_2d
+    normalized = (matrix_2d - matrix_2d.min()) / (matrix_2d.max() - matrix_2d.min())
+    return normalized
 
 
 def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
@@ -63,8 +64,7 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     instances_ = ctypes.c_int(instances)
     force_c(xpp,ypp,instances_, max_iter_,eps_, delta_frac_)
 
-    normalized = (Y-Y.min())/(Y.max()-Y.min())
-    return normalized
+    return Y
 
 
 def _force_old(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):

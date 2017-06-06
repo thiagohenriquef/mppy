@@ -44,8 +44,8 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
         initial_projection = _force(data_matrix)
 
     distance_matrix = squareform(pdist(data_matrix), 'euclidean')
-    projection_aux = initial_projection.copy()
     instances = distance_matrix.shape[0]
+    projection_aux = initial_projection.copy()
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
     c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/c_codes/sammon.so")
 
@@ -71,13 +71,20 @@ def _sammon_old(data_matrix, initial_projection=None, max_iter=50, magic_factor=
     """Common code for lamp_2d(), lsp_2d(), pekalska_2d(), plmp_2d and sammon()"""
     import numpy as np
     from scipy.spatial.distance import pdist, squareform
-    from sklearn import manifold
+    # from sklearn import manifold
+    # from sklearn.decomposition import PCA
+    from mppy.force import _force
+    import time
+    start_time = time.time()
 
     distance_matrix = squareform(pdist(data_matrix), 'euclidean')
 
     if initial_projection is None:
-        mds = manifold.MDS(n_components=dim, dissimilarity="euclidean")
-        initial_projection = mds.fit_transform(data_matrix)
+        #mds = manifold.MDS(n_components=dim, dissimilarity="euclidean")
+        #initial_projection = mds.fit_transform(data_matrix)
+        #pca = PCA(n_components=2)
+        #initial_projection = pca.fit_transform(data_matrix)
+        initial_projection = _force(data_matrix)
 
     for i in range(max_iter):
         sum_dist_rn = 0.0
@@ -119,5 +126,8 @@ def _sammon_old(data_matrix, initial_projection=None, max_iter=50, magic_factor=
 
                 delta_pq = ((c * sum_inder_1) / abs(c * sum_inder_2))
                 initial_projection[p, q] -= magic_factor * delta_pq
+
+
+    print("Sammon's mapping: %f seconds" % (time.time() - start_time))
     return initial_projection
 
