@@ -26,7 +26,6 @@ def pekalska_2d(data_matrix, sample_indices=None, sample_proj=None):
     matrix_2d = np.random.random((instances, 2))
 
     start_time = time.time()
-    # creating the sample distance matrix
     if sample_indices is None:
         #sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
         sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
@@ -34,12 +33,9 @@ def pekalska_2d(data_matrix, sample_indices=None, sample_proj=None):
     Ds = data_matrix[sample_indices, :]
     if sample_proj is None:
         sample_proj = force._force(Ds)
-        # sample_proj = sammon._sammon(Ds)
     print("Initial projection time: %f" % (time.time() - start_time))
 
     # creating base D
-    n_rows, n_cols = sample_proj.shape
-    #D = np.zeros((n_rows, n_rows))
     D = squareform(pdist(Ds), 'euclidean')
 
     # creating base Y

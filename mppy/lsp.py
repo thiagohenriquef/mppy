@@ -85,7 +85,7 @@ def _lsp_old(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15)
 
     start_time = time.time()
     if sample_indices is None:
-        sample_indices = np.random.choice(instances, int(3.0 * (np.sqrt(instances))), replace=False)
+        sample_indices = np.random.choice(instances, int(1.0 * (np.sqrt(instances))), replace=False)
         sample_proj = None
 
     if sample_proj is None:

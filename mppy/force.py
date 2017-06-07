@@ -67,8 +67,9 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     return Y
 
 
-def _force_old(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
-    """ Common code for force_2d(), lamp_2d(), lsp_2d(), pekalska_2d() and plmp_2d()."""
+def force_old(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
+    """ Old version of Force Scheme technique."""
+    print("Depending on the size of the set, this will be very slow ...")
     import numpy as np
     from scipy.spatial.distance import pdist, squareform
 
