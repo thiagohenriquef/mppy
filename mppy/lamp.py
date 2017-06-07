@@ -97,7 +97,7 @@ def lamp_alpha(data_matrix, sample_indices=None, sample_proj=None, proportion=1)
     AtB = np.zeros((d, r))
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/lamp.so")
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/src/lamp.so")
 
     lamp_c = c_code.lamp
     lamp_c.argtypes = [double_pointer, double_pointer, double_pointer, double_pointer, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]

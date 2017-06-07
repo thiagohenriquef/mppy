@@ -18,7 +18,7 @@ def kruskal_stress(distance_rn, distance_r2):
     distance_r2 = squareform(pdist(distance_r2), 'euclidean')
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/c_codes/kruskal.so")
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/src/kruskal.so")
 
     kruskal_c = c_code.kruskal_stress
     kruskal_c.argtypes = [double_pointer, double_pointer, ctypes.c_int]
@@ -53,7 +53,7 @@ def normalized_kruskal_stress(distance_rn, distance_r2):
     distance_r2 = squareform(pdist(distance_r2), 'euclidean')
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/c_codes/kruskal.so")
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/src/kruskal.so")
 
     kruskal_c = c_code.normalized_kruskal
     kruskal_c.argtypes = [double_pointer, double_pointer, ctypes.c_int]

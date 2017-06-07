@@ -5,6 +5,7 @@ mppy/__init__.py
 mppy/force.py
 mppy/lamp.py
 mppy/lsp.py
+mppy/neighborhood.py
 mppy/pekalska.py
 mppy/plmp.py
 mppy/plot.py

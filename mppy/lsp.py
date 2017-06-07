@@ -49,7 +49,7 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     b = np.zeros((instances+nc, 2)).astype(np.float64)
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/c_codes/lsp.so")
+    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/src/lsp.so")
 
     lsp_c = c_code.lsp
     lsp_c.argtypes = [double_pointer, double_pointer, double_pointer, ctypes.c_void_p, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_float]
