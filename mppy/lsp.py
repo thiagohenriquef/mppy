@@ -31,7 +31,7 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     start_time = time.time()
     if sample_indices is None:
         #sample_indices = np.random.choice(instances, int(3.0 * (np.sqrt(instances))), replace=False)
-        sample_indices = np.random.randint(0, instances-1, int(3.0 * (np.sqrt(instances))))
+        sample_indices = np.random.randint(0, instances-1, int(1.0 * (np.sqrt(instances))))
         sample_proj = None
 
     if sample_proj is None:
@@ -78,6 +78,7 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     lsp_c(neighbors_pp, App, bpp, sample_indices_p, sample_projdpp, nc_, n_neighbors_, instances_, weight_)
 
     x, residuals, rank, s = np.linalg.lstsq(A,b)
+    #x = np.linalg.solve(A, b)
 
     print("LSP: %f seconds" % (time.time() - start_time))
     return x
@@ -121,6 +122,7 @@ def _lsp_old(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15)
 
     # solving the system Ax=B
     x, residuals, rank, s = np.linalg.lstsq(A,b)
+    #x = np.linalg.solve(A,b)
 
     print("Algorithm execution: %f seconds" % (time.time() - start_time))
     return x

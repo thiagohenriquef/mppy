@@ -9,8 +9,10 @@ def plmp_2d(data_matrix, sample_indices=None, dim=2):
     initial_matrix = np.random.random((dimensions, 2))
 
     start_time = time.time()
+    size = np.sqrt(instances) if np.sqrt(instances) > dimensions else 2.0 * np.sqrt(instances)
     if sample_indices is None:
-        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
+        sample_indices = np.random.randint(0, instances - 1, int(size))
+        #sample_indices = np.random.choice(instances, int(size), replace=False)
 
     Xs = data_matrix[sample_indices, :]
     sample_data = _force(Xs)
@@ -30,6 +32,8 @@ def plmp_2d(data_matrix, sample_indices=None, dim=2):
     for j in range(instances):
         matrix_2d[j, :] = np.dot(data_matrix[j, :], initial_matrix)
 
+    matrix_2d[sample_indices,:] = sample_data
+
     print("PLMP: %f seconds" % (time.time() - start_time))
     return matrix_2d
 
@@ -38,15 +42,15 @@ def plmp_beta(data_matrix, sample_indices=None):
     import time
     from scipy.linalg import solve, lstsq
 
-    instances, dim = data_matrix.shape
+    instances, dimensions = data_matrix.shape
     start_time = time.time()
+    size = np.sqrt(instances) if np.sqrt(instances) > dimensions else 2.0 * np.sqrt(instances)
     if sample_indices is None:
-        #sample_indices = np.random.randint(0, instances-1, int(1.0 * np.sqrt(instances)))
-        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
+        sample_indices = np.random.randint(0, instances-1, int(size))
+        #sample_indices = np.random.choice(instances, int(size), replace=False)
 
     D = data_matrix[sample_indices, :]
     P = _force(data_matrix[sample_indices,:])
-
     try:
         aux = solve(np.dot(D.T, D), np.dot(D.T, P))
     except np.linalg.LinAlgError or RuntimeWarning:

@@ -11,7 +11,7 @@ mppy/plmp.py
 mppy/plot.py
 mppy/sammon.py
 mppy/stress.py
-mppy/src/force.c
-mppy/src/kruskal.c
-mppy/src/lsp.c
-mppy/src/sammon.c
+src/force.c
+src/kruskal.c
+src/lsp.c
+src/sammon.c
