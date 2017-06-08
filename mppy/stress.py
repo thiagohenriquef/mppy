@@ -11,15 +11,19 @@ def kruskal_stress(distance_rn, distance_r2):
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
-    import os
+    import pathlib,site
     import numpy as np
 
     distance_rn = squareform(pdist(distance_rn), 'euclidean')
     distance_r2 = squareform(pdist(distance_r2), 'euclidean')
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/src/kruskal.so")
-
+    for i in range(len(site.getsitepackages())):
+        path = pathlib.Path(site.getsitepackages()[i]+"/kruskal.so")
+        if path.is_file():
+            string = site.getsitepackages()[i] + "/kruskal.so"
+            break
+    c_code = ctypes.CDLL(string)
     kruskal_c = c_code.kruskal_stress
     kruskal_c.argtypes = [double_pointer, double_pointer, ctypes.c_int]
     kruskal_c.restype = None
@@ -46,14 +50,19 @@ def normalized_kruskal_stress(distance_rn, distance_r2):
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
-    import os
+    import site,pathlib
     import numpy as np
 
     distance_rn = squareform(pdist(distance_rn), 'euclidean')
     distance_r2 = squareform(pdist(distance_r2), 'euclidean')
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/src/kruskal.so")
+    for i in range(len(site.getsitepackages())):
+        path = pathlib.Path(site.getsitepackages()[i] + "/kruskal.so")
+        if path.is_file():
+            string = site.getsitepackages()[i] + "/kruskal.so"
+            break
+    c_code = ctypes.CDLL(string)
 
     kruskal_c = c_code.normalized_kruskal
     kruskal_c.argtypes = [double_pointer, double_pointer, ctypes.c_int]

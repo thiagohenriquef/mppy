@@ -27,7 +27,7 @@ class CTypes(Extension): pass
 setup(
     name = 'mppy',
     packages = ['mppy'], # this must be the same as the name above
-    version = '0.4.0b',
+    version = '0.4.0rc',
     description = 'Multidimensional Projection in Python',
     ext_modules=[CTypes('force', sources=['mppy/src/force.c']), CTypes('sammon', sources=['mppy/src/sammon.c']), CTypes('kruskal', sources=['mppy/src/kruskal.c']), CTypes('lsp', sources=['mppy/src/lsp.c'])],
     cmdclass={'build_ext': build_ext},
@@ -35,7 +35,7 @@ setup(
     author = 'Thiago Henrique Ferreira',
     author_email = 'thiagohferreira10@gmail.com',
     url = 'https://github.com/thiagohenriquef/mppy',
-    download_url = 'https://github.com/thiagohenriquef/mppy/archive/0.4.0b.tar.gz',
+    download_url = 'https://github.com/thiagohenriquef/mppy/archive/0.4.0rc.tar.gz',
     keywords = ['multidimensional projection', 'data visualization', 'dimensionality reduction'],
     classifiers=['Development Status :: 4 - Beta',
                  'Programming Language :: Python :: 3.5',

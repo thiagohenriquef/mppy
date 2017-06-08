@@ -1,6 +1,6 @@
 __author__ = 'Thiago Henrique Ferreira'
 __email__ = 'thiago.h.ferreira@ufv.br'
-__version__ = '0.4.0b'
+#__version__ = '0.4.0b'
 
 from mppy.force import force_2d
 from mppy.lamp import lamp_2d

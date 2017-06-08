@@ -1,2 +1,6 @@
 .idea
 test_techniques.py
+test_np.py
+test_nh.py
+test_kruskal.py
+*.pyc
