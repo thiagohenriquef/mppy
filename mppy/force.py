@@ -37,14 +37,23 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
-    import os
+    import site, pathlib
     import numpy as np
 
     if Y is None:
         Y = np.random.random((X.shape[0], 2))
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/src/force.so")
+
+
+    for i in range(len(site.getsitepackages())):
+        path = pathlib.Path(site.getsitepackages()[i]+"/force.so")
+        if path.is_file():
+            string = site.getsitepackages()[i] + "/force.so"
+            break
+
+    c_code = ctypes.CDLL(string)
+    #c_code = ctypes.CDLL("force.so")
 
     force_c = c_code.force
     force_c.argtypes = [double_pointer, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_double]

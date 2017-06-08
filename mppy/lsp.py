@@ -24,7 +24,7 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     import time
     import ctypes
     from numpy.ctypeslib import ndpointer
-    import os
+    import pathlib, site
     
     instances = data_matrix.shape[0]
     
@@ -49,7 +49,13 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     b = np.zeros((instances+nc, 2)).astype(np.float64)
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__))+"/src/lsp.so")
+    for i in range(len(site.getsitepackages())):
+        path = pathlib.Path(site.getsitepackages()[i]+"/lsp.so")
+        if path.is_file():
+            string = site.getsitepackages()[i] + "/lsp.so"
+            break
+
+    c_code = ctypes.CDLL(string)
 
     lsp_c = c_code.lsp
     lsp_c.argtypes = [double_pointer, double_pointer, double_pointer, ctypes.c_void_p, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_float]

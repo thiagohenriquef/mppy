@@ -15,7 +15,7 @@ Advisor: Tácito Trindade de Araújo Tiburtino Neves <p>
 Dependencies
 
 The installation of mppy requires:
-- [Python](https://www.python.org/) (>=3.4)
+- [Python](https://www.python.org/) (>=3.5)
 - [numpy](http://www.numpy.org/) (>=1.11.0) 
 - [scipy](https://www.scipy.org/) (>=0.17.0)
 - [matplotlib](https://matplotlib.org/) (>=1.5.1) 
@@ -45,14 +45,12 @@ git clone https://github.com/thiagohenriquef/mppy.git
 ```
 
 ### Techniques
-* Force Scheme -> OK <p>
-* LAMP -> OK <p>
-* LSP -> OK <p>
-* Pekalska -> OK <p>
-* PLMP -> almost OK, cholesky error (not matrix definite), using LU <p>
-* Sammon -> OK <p>
+* Force Scheme
+* LAMP
+* LSP
+* PLMP
+* Pekalska
+* Sammon's Mapping
 
 ### Contact
 * "Thiago H. Ferreira" <thiagohferreira10@gmail.com>
-
-<span class="pln">os</span><span class="pun">.</span><span class="pln">system</span><span class="pun">(</span><span class="str" style="color: #800000;">"taskset -p 0xffffffff %d"</span><span class="pun">%</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">getpid</span><span class="pun">())</span>

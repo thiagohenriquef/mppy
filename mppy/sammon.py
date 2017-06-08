@@ -33,7 +33,7 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     from scipy.spatial.distance import pdist, squareform
     import ctypes
     from numpy.ctypeslib import ndpointer
-    import os
+    import pathlib, site
     import numpy as np
     from mppy.force import _force
 
@@ -44,7 +44,14 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     instances = distance_matrix.shape[0]
     projection_aux = initial_projection.copy()
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
-    c_code = ctypes.CDLL(os.path.dirname(os.path.realpath(__file__)) + "/src/sammon.so")
+
+    for i in range(len(site.getsitepackages())):
+        path = pathlib.Path(site.getsitepackages()[i]+"/sammon.so")
+        if path.is_file():
+            string = site.getsitepackages()[i] + "/sammon.so"
+            break
+
+    c_code = ctypes.CDLL(string)
 
     sammon_c = c_code.sammon
     sammon_c.argtypes = [double_pointer, double_pointer, double_pointer, ctypes.c_int, ctypes.c_int, ctypes.c_double, ctypes.c_double]
