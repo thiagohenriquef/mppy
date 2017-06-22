@@ -45,7 +45,7 @@ def interactive_scatter_plot(matrix_2d, matrix, clusters=None):
 
         def onpick3(event):
             ind = event.ind
-            print("Element: ", ind, "->", matrix[ind, :])
+            print("Element: ", ind, "-> %.2f", matrix[ind, :])
 
         fig = mplpy.figure()
         ax1 = fig.add_subplot(111)
