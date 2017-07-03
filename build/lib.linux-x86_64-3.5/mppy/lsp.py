@@ -25,7 +25,6 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     import ctypes
     from numpy.ctypeslib import ndpointer
     import pathlib, site
-    from os.path import sep
     
     instances = data_matrix.shape[0]
     
@@ -51,9 +50,9 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
 
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
     for i in range(len(site.getsitepackages())):
-        path = pathlib.Path(site.getsitepackages()[i]+sep+"lsp.so")
+        path = pathlib.Path(site.getsitepackages()[i]+"/lsp.so")
         if path.is_file():
-            string = site.getsitepackages()[i]+sep+"lsp.so"
+            string = site.getsitepackages()[i] + "/lsp.so"
             break
 
     c_code = ctypes.CDLL(string)

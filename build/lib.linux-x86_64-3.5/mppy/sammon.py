@@ -36,7 +36,6 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     import pathlib, site
     import numpy as np
     from mppy.force import _force
-    from os.path import sep
 
     if initial_projection is None:
         initial_projection = _force(data_matrix)
@@ -47,9 +46,9 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
     double_pointer = ndpointer(dtype=np.uintp, ndim=1, flags='C')
 
     for i in range(len(site.getsitepackages())):
-        path = pathlib.Path(site.getsitepackages()[i]+sep+"sammon.so")
+        path = pathlib.Path(site.getsitepackages()[i]+"/sammon.so")
         if path.is_file():
-            string = site.getsitepackages()[i]+sep+"sammon.so"
+            string = site.getsitepackages()[i] + "/sammon.so"
             break
 
     c_code = ctypes.CDLL(string)

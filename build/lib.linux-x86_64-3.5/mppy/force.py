@@ -39,7 +39,6 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     from numpy.ctypeslib import ndpointer
     import site, pathlib
     import numpy as np
-    from os.path import sep
 
     if Y is None:
         Y = np.random.random((X.shape[0], 2))
@@ -48,9 +47,9 @@ def _force(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
 
 
     for i in range(len(site.getsitepackages())):
-        path = pathlib.Path(site.getsitepackages()[i]+sep+"force.so")
+        path = pathlib.Path(site.getsitepackages()[i]+"/force.so")
         if path.is_file():
-            string = site.getsitepackages()[i]+sep+"force.so"
+            string = site.getsitepackages()[i] + "/force.so"
             break
 
     c_code = ctypes.CDLL(string)

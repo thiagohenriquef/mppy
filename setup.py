@@ -1,5 +1,6 @@
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
+from os.path import sep
 import sys
 
 if sys.version_info[:2] < (3,5):
@@ -27,9 +28,9 @@ class CTypes(Extension): pass
 setup(
     name = 'mppy',
     packages = ['mppy'],
-    version = '0.4.1b',
+    version = '0.4.4b',
     description = 'Multidimensional Projection in Python',
-    ext_modules=[CTypes('force', sources=['src/force.c']), CTypes('sammon', sources=['src/sammon.c']), CTypes('kruskal', sources=['src/kruskal.c']), CTypes('lsp', sources=['src/lsp.c'])],
+    ext_modules=[CTypes('force', sources=['src'+sep+'force.c']), CTypes('sammon', sources=['src'+sep+'sammon.c']), CTypes('kruskal', sources=['src'+sep+'kruskal.c']), CTypes('lsp', sources=['src'+sep+'lsp.c'])],
     cmdclass={'build_ext': build_ext},
     long_description= 'The mppy is a multidimensional projection library that generates 2D representations of high dimensional data sets.',
     license='GPL-3.0',
