@@ -3,4 +3,10 @@ test_techniques.py
 test_np.py
 test_nh.py
 test_kruskal.py
+test_nh_Java.py
+test_nh_R.py
+test_np_Java.py
+test_np_R.py
+*.so
 *.pyc
+/build
