@@ -44,6 +44,7 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
 
     if initial_projection is None:
         initial_projection = _force(data_matrix)
+        initial_projection = (initial_projection - initial_projection.min()) / (initial_projection.max() - initial_projection.min())
 
     distance_matrix = squareform(pdist(data_matrix), 'euclidean')
     instances = distance_matrix.shape[0]
