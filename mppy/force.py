@@ -24,9 +24,13 @@ def force_2d(X, Y=None, max_iter=50, delta_frac=8.0, eps=1e-4):
     """
 
     import time
+    import platform
 
     start_time = time.time()
-    matrix_2d = _force(X, Y, max_iter, delta_frac, eps)
+    if platform.system() == 'Linux':
+        matrix_2d = _force(X, Y, max_iter, delta_frac, eps)
+    else:
+        matrix_2d = force_old(X, Y, max_iter, delta_frac, eps)
     print("Force Scheme: %f seconds" % (time.time() - start_time))
 
     return matrix_2d

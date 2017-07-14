@@ -21,8 +21,12 @@ def sammon(matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1
         IEEE Transactions on computers 100.5 (1969): 401-409.
     """
     import time
+    import platform
     start_time = time.time()
-    matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol)
+    if platform.system() == 'Linux':
+        matrix_2d = _sammon(matrix, initial_projection, max_iter, magic_factor, tol)
+    else:
+        matrix_2d = sammon_old(matrix, initial_projection, max_iter, magic_factor, tol)
     print("Sammon's mapping: %f seconds" % (time.time() - start_time))
 
     return matrix_2d
@@ -72,9 +76,9 @@ def _sammon(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3,
 
     return initial_projection
 
-def _sammon_old(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
+def sammon_old(data_matrix, initial_projection=None, max_iter=50, magic_factor=0.3, tol=1e-4, dim=2):
     """Common code for lamp_2d(), lsp_2d(), pekalska_2d(), plmp_2d and sammon()"""
-    print("Depending on the size of the set, this will be very slow ...")
+    print("Depending on the size of the dataset, this will be very slow ...")
     import numpy as np
     from scipy.spatial.distance import pdist, squareform
     from mppy.force import _force

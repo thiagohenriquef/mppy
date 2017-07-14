@@ -12,11 +12,15 @@ def pekalska_2d(data_matrix, sample_indices=None, sample_proj=None):
     start_time = time.time()
     if sample_indices is None:
         #sample_indices = np.random.randint(0, instances - 1, int(1.0 * np.sqrt(instances)))
-        sample_indices = np.random.choice(instances, int(1.0 * np.sqrt(instances)), replace=False)
+        sample_indices = np.random.choice(instances, int(3.0 * np.sqrt(instances)), replace=False)
 
     Ds = data_matrix[sample_indices, :]
     if sample_proj is None:
-        sample_proj = force._force(Ds)
+        import platform
+        if platform.system() == 'Linux':
+            sample_proj = force._force(Ds)
+        else:
+            sample_proj = force.force_old(Ds)
     print("Initial projection time: %f" % (time.time() - start_time))
 
     # creating base D

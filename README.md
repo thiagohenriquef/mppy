@@ -23,7 +23,7 @@ The installation of mppy requires:
 
 This project can be installed using [pip](https://pypi.python.org/pypi/pip)
 ```sh
-$ pip install mppy
+$ pip3 install mppy
 ```
 
 ### Example
@@ -31,7 +31,7 @@ Here is an example of using the Force Scheme technique in the [Iris dataset](htt
 ```python3
 >>> import numpy as np, mppy
 >>> data = np.loadtxt("datasets/iris.data", delimiter=",")
->>> clusters = data[:, data.shape[1]-1]
+>>> clusters = data[:, 4]
 >>> matrix_2d = mppy.force_2d(data[:,0:3])
 >>> mppy.simple_scatter_plot(matrix_2d,clusters)
 ```

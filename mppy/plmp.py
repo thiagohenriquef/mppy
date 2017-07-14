@@ -1,4 +1,4 @@
-from mppy.force import _force
+import mppy.force as force
 
 
 def plmp_2d(data_matrix, sample_indices=None, dim=2):
@@ -11,11 +11,15 @@ def plmp_2d(data_matrix, sample_indices=None, dim=2):
     start_time = time.time()
     size = np.sqrt(instances) if np.sqrt(instances) > dimensions else 2.0 * np.sqrt(instances)
     if sample_indices is None:
-        sample_indices = np.random.randint(0, instances - 1, int(size))
+        sample_indices = np.random.randint(0, instances - 1, int(3.0 * size))
         #sample_indices = np.random.choice(instances, int(size), replace=False)
 
     Xs = data_matrix[sample_indices, :]
-    sample_data = _force(Xs)
+    import platform
+    if platform.system() == 'Linux':
+        sample_data = force._force(Xs)
+    else:
+        sample_data = force.force_old(Xs)
 
     L = np.transpose(Xs)
     for i in range(dim):

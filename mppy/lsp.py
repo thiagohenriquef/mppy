@@ -37,8 +37,11 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
 
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
-        #sample_proj = sammon._sammon(aux)
-        sample_proj = force._force(aux)
+        import platform
+        if platform.system() == 'Linux':
+            sample_proj = force._force(aux)
+        else:
+            sample_proj = force.force_old(aux)
     print("Initial projection time: %f" % (time.time() - start_time))
     
 
@@ -84,7 +87,7 @@ def lsp_2d(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15, w
     print("LSP: %f seconds" % (time.time() - start_time))
     return x
 
-def _lsp_old(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
+def lsp_old(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15):
     import numpy as np
     from scipy.spatial.distance import squareform, pdist
     import time
@@ -98,7 +101,11 @@ def _lsp_old(data_matrix, sample_indices=None, sample_proj=None, n_neighbors=15)
 
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
-        sample_proj = force._force(aux)
+        import platform
+        if platform.system() == 'Linux':
+            sample_proj = force._force(aux)
+        else:
+            sample_proj = force.force_old(aux)
     print("Initial projection time: %f" % (time.time() - start_time))
 
 

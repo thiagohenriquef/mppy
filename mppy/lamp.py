@@ -15,7 +15,12 @@ def lamp_2d(data_matrix, sample_indices=None, sample_proj=None, tol=1e-4, propor
     sample_data = data_matrix[sample_indices, :]
     if sample_proj is None:
         aux = data_matrix[sample_indices, :]
-        sample_proj = force._force(aux)
+        import platform
+        if platform.system() == 'Linux':
+            sample_proj = force._force(aux)
+        else:
+            sample_proj = force.force_old(aux)
+
     print("Initial projection: %f seconds" % (time.time() - start_time))
 
     k, a = sample_data.shape
